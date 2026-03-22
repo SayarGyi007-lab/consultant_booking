@@ -1,0 +1,69 @@
+generator client {
+  provider = "prisma-client-js"
+  
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String    @id @default(uuid())
+  firstName String
+  lastName  String
+  email     String    @unique
+  password  String
+  role      Role      @default(USER)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  phone     String    @unique
+  deletedAt DateTime?
+  bookings  Booking[]
+}
+
+model Consultant {
+  id        String     @id @default(uuid())
+  firstName String
+  lastName  String
+  email     String     @unique
+  expertise String
+  createdAt DateTime   @default(now())
+  phone     String     @unique
+  slots     TimeSlot[]
+  deletedAt DateTime?
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+model TimeSlot {
+  id           String     @id @default(uuid())
+  consultantId String
+  startTime    DateTime
+  endTime      DateTime
+  status       SlotStatus @default(AVAILABLE)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime @default(now()) @updatedAt
+  booking      Booking?
+  consultant   Consultant @relation(fields: [consultantId], references: [id])
+}
+
+model Booking {
+  id            String   @id @default(uuid())
+  slotId        String   @unique
+  userId        String?
+  customerName  String
+  customerEmail String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @default(now()) @updatedAt
+  slot          TimeSlot @relation(fields: [slotId], references: [id])
+  user          User?    @relation(fields: [userId], references: [id])
+}
+
+enum Role {
+  ADMIN
+  USER
+}
+
+enum SlotStatus {
+  AVAILABLE
+  BOOKED
+}
