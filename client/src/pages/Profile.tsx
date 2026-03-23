@@ -91,7 +91,7 @@ const Profile = () => {
 
   return (
     <div className="flex flex-col items-center min-h-screen px-4 py-12 bg-gray-50">
-      {/* ✅ Dynamic title */}
+
       <h1 className="text-3xl font-bold text-gray-800 mb-8">
         {isAdmin ? "Admin Profile" : "Profile"}
       </h1>
@@ -137,7 +137,6 @@ const Profile = () => {
           </div>
         </div>
 
-        {/* Form */}
         <div className="grid grid-cols-2 gap-6 mb-10">
           {["firstName", "lastName", "email", "phone"].map((field) => (
             <FormInput
@@ -163,7 +162,7 @@ const Profile = () => {
           ))}
         </div>
 
-        {/* ✅ Hide bookings if admin */}
+        {/*Hide bookings if admin */}
         {!isAdmin && (
           <ProfileBooking
             bookings={bookings}
@@ -173,7 +172,7 @@ const Profile = () => {
         )}
       </AnimatedCard>
 
-      {/* ✅ Dynamic back button */}
+      {/*Dynamic back button */}
       <Button
         className="mt-6"
         onClick={() => navigate(isAdmin ? "/admin" : "/home")}

@@ -1,7 +1,6 @@
 import { NextFunction, Response } from "express";
 import { AuthRequest } from "./authentication";
 import { AppError } from "../utils/app-error";
-import { Role } from "@prisma/client";
 
 export const adminOnly = (
     req: AuthRequest,
@@ -45,14 +44,3 @@ export const Both = (
 
     next();
 };
-
-// export const allowRoles = (...roles: Role[]) => {
-//   return (req: AuthRequest, _res: Response, next: NextFunction) => {
-
-//     if (!req.user || !roles.includes(req.user.role)) {
-//       throw new AppError("Forbidden", 403);
-//     }
-
-//     next();
-//   };
-// };

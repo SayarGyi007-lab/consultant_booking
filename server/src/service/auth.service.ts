@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt'
 import generateTokens from "../utils/token";
 import { Response } from "express";
 import { AppError } from "../utils/app-error";
+import { bumpVersion } from "../utils/cache-version";
 
 
 class AuthService{
@@ -33,6 +34,9 @@ class AuthService{
                 password: hashedPassword,
             }
         });
+
+        await bumpVersion("users:version");
+        await bumpVersion("user:version"); 
 
         return user;
     }

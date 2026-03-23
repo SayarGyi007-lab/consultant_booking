@@ -73,7 +73,6 @@ const Booking = () => {
 
         <form onSubmit={handleSubmit(submit)} className="space-y-4">
 
-          {/* Customer Info */}
           <FormInput
             label="Customer Name"
             type="text"
@@ -90,7 +89,6 @@ const Booking = () => {
           />
           {errors.customerEmail && <p className="text-red-400 text-sm">{errors.customerEmail.message}</p>}
 
-          {/* Expertise */}
           <div>
             <label className="block font-medium mb-1">Select Expertise</label>
             <select
@@ -110,7 +108,6 @@ const Booking = () => {
             </select>
           </div>
 
-          {/* Consultant */}
           {selectedExpertise && (
             <div>
               <label className="block font-medium mb-1">Select Consultant</label>
@@ -131,7 +128,6 @@ const Booking = () => {
             </div>
           )}
 
-          {/* Time Slot */}
           {selectedConsultantId && (
             <div>
               <label className="block font-medium mb-1">Select Time Slot</label>
@@ -159,7 +155,6 @@ const Booking = () => {
             </div>
           )}
 
-          {/* Buttons */}
           <div className='flex gap-4'>
             <Button className="w-full justify-center" variant='outline' onClick={handleBack}>
               Back

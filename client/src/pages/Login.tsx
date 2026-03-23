@@ -62,8 +62,6 @@ const LoginPage = () => {
                         label="Email"
                         type="email"
                         placeholder="Enter your email"
-                        // value={email}
-                        // onChange={(e) => setEmail(e.target.value)}
                         {...register('email')}
                     />
                     {errors.email && (
@@ -73,7 +71,6 @@ const LoginPage = () => {
                     <PasswordInput
                         label="Password"
                         placeholder="Enter your password"
-                        // onChange={(e) => setPassword(e.target.value)}
                         {...register('password')}
                     />
                     {errors.password && (

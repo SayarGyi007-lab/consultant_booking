@@ -3,6 +3,7 @@ import { useState } from "react";
 import type { TimeSlot } from "../../slices/interfaces/time-slot";
 import Button from "../../ui/Button";
 import DeleteWarning from "../../ui/DeleteWarning";
+import { dateOptions, timeOptions } from "../../utils/date-time";
 
 interface Props {
   timeSlots: TimeSlot[];
@@ -11,6 +12,7 @@ interface Props {
   onUpdate: (id: string) => void;
   isDeleting?: boolean;
 }
+
 const TimeSlotsTable = ({
   timeSlots,
   title = "Time Slots",
@@ -23,75 +25,98 @@ const TimeSlotsTable = ({
   const confirmDelete = () => {
     if (!selectedId) return;
     const slot = timeSlots.find((s) => s.id === selectedId);
-    if (slot) {
-      onDelete?.(slot.id, slot.status);
-    }
+    if (slot) onDelete?.(slot.id, slot.status);
     setSelectedId(null);
   };
 
   return (
-    <div className="bg-white p-6 rounded-2xl shadow-sm">
+    <div className="bg-white p-6 rounded-2xl shadow-sm w-full">
       <h2 className="text-lg font-semibold mb-4">{title}</h2>
 
       <div className="overflow-x-auto w-full">
-        <div className="overflow-x-auto w-full">
-          <table className="min-w-[1600px] text-left border-separate border-spacing-x-4 border-spacing-y-2">
-            <thead className="p-4">
-              <tr className="text-gray-500 text-sm border-b p-4">
-                <th className="pb-3 w-[500px]">No.</th>
-                <th className="pb-3 w-[500px]">Slot ID</th>
-                <th className="w-[300px]">Consultant</th>
-                <th className="w-[250px]">Consultant Email</th>
-                <th className="w-[180px]">Consultant Phone</th>
-                <th className="w-[180px]">Expertise</th>
-                <th className="w-[120px]">Date</th>
-                <th className="w-[100px]">Start</th>
-                <th className="w-[100px]">End</th>
-                <th className="w-[120px]">Status</th>
-                <th className="w-[180px]">Booked By</th>
-                <th className="w-[250px]">Customer Email</th>
-                <th className="w-[150px] text-center">Action</th>
-              </tr>
-            </thead>
+        <table className="w-full min-w-[1600px] text-left border-collapse">
+          <thead>
+            <tr className="text-gray-500 text-sm border-b border-gray-200">
+              <th className="px-4 py-3 whitespace-nowrap font-medium">No.</th>
+              <th className="px-4 py-3 whitespace-nowrap font-medium">Slot ID</th>
+              <th className="px-4 py-3 whitespace-nowrap font-medium">Consultant</th>
+              <th className="px-4 py-3 whitespace-nowrap font-medium">Consultant Email</th>
+              <th className="px-4 py-3 whitespace-nowrap font-medium">Consultant Phone</th>
+              <th className="px-4 py-3 whitespace-nowrap font-medium">Expertise</th>
+              <th className="px-4 py-3 whitespace-nowrap font-medium">Date</th>
+              <th className="px-4 py-3 whitespace-nowrap font-medium">Start</th>
+              <th className="px-4 py-3 whitespace-nowrap font-medium">End</th>
+              <th className="px-4 py-3 whitespace-nowrap font-medium">Status</th>
+              <th className="px-4 py-3 whitespace-nowrap font-medium">Booked By</th>
+              <th className="px-4 py-3 whitespace-nowrap font-medium">Customer Email</th>
+              <th className="px-4 py-3 whitespace-nowrap font-medium text-center">Action</th>
+            </tr>
+          </thead>
 
-            <tbody>
-              {timeSlots.map((slot,index) => {
-                const start = new Date(slot.startTime);
-                const end = new Date(slot.endTime);
+          <tbody>
+            {timeSlots.map((slot, index) => {
+              const start = new Date(slot.startTime);
+              const end = new Date(slot.endTime);
 
-                return (
-                  <tr key={slot.id} className="hover:bg-gray-50 text-sm">
-                    <td>{index+1}</td>
-                    <td>{slot.id}</td>
-                    <td>{slot.consultant ? `${slot.consultant.firstName} ${slot.consultant.lastName}` : "Unknown"}</td>
-                    <td>{slot.consultant?.email ?? "—"}</td>
-                    <td>{slot.consultant?.phone ?? "—"}</td>
-                    <td>{slot.consultant?.expertise ?? "—"}</td>
-                    <td>{start.toLocaleDateString()}</td>
-                    <td>{start.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</td>
-                    <td>{end.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</td>
-                    <td>
-                      <span
-                        className={`px-3 py-1 text-xs rounded-full ${slot.status === "AVAILABLE"
-                            ? "bg-green-100 text-green-700"
-                            : "bg-red-100 text-red-700"
-                          }`}
-                      >
-                        {slot.status}
-                      </span>
-                    </td>
-                    <td>{slot.booking?.customerName ?? "—"}</td>
-                    <td>{slot.booking?.customerEmail ?? "—"}</td>
-                    <td className="flex gap-2 justify-center">
+              return (
+                <tr key={slot.id} className="hover:bg-gray-50 text-sm border-b border-gray-100">
+                  <td className="px-4 py-3">{index + 1}</td>
+
+                  <td className="px-4 py-3 text-xs text-gray-500 font-mono">{slot.id}</td>
+
+                  <td className="px-4 py-3 whitespace-nowrap font-medium">
+                    {slot.consultant
+                      ? `${slot.consultant.firstName} ${slot.consultant.lastName}`
+                      : "Unknown"}
+                  </td>
+
+                  <td className="px-4 py-3">{slot.consultant?.email ?? "—"}</td>
+
+                  <td className="px-4 py-3 whitespace-nowrap">{slot.consultant?.phone ?? "—"}</td>
+
+                  <td className="px-4 py-3">
+                    <span className="px-3 py-1 text-xs rounded-full bg-green-100 text-green-700 whitespace-nowrap">
+                      {slot.consultant?.expertise ?? "—"}
+                    </span>
+                  </td>
+
+                  <td className="px-4 py-3 whitespace-nowrap text-xs text-gray-600">
+                    {start ? start.toLocaleDateString(undefined, dateOptions) : "—"}
+                  </td>
+
+                  <td className="px-4 py-3 whitespace-nowrap text-xs text-gray-600">
+                    {start ? start.toLocaleTimeString(undefined, timeOptions) : "—"}
+                  </td>
+
+                  <td className="px-4 py-3 whitespace-nowrap text-xs text-gray-600">
+                    {end ? end.toLocaleTimeString(undefined, timeOptions) : "—"}
+                  </td>
+
+                  <td className="px-4 py-3">
+                    <span
+                      className={`px-3 py-1 text-xs rounded-full whitespace-nowrap ${slot.status === "AVAILABLE"
+                          ? "bg-green-100 text-green-700"
+                          : "bg-red-100 text-red-700"
+                        }`}
+                    >
+                      {slot.status}
+                    </span>
+                  </td>
+
+                  <td className="px-4 py-3 whitespace-nowrap">{slot.booking?.customerName ?? "—"}</td>
+
+                  <td className="px-4 py-3">{slot.booking?.customerEmail ?? "—"}</td>
+
+                  <td className="px-4 py-3 text-center align-middle">
+                    <div className="flex justify-center items-center gap-2">
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => onUpdate(slot.id)}
                         className="bg-green-300 hover:bg-green-400"
+                        onClick={() => onUpdate(slot.id)}
                       >
                         Edit
                       </Button>
-
                       <Button
                         variant="danger"
                         size="icon"
@@ -99,13 +124,13 @@ const TimeSlotsTable = ({
                       >
                         <Trash2 size={18} />
                       </Button>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+                    </div>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
       </div>
 
       <DeleteWarning
@@ -119,6 +144,6 @@ const TimeSlotsTable = ({
       />
     </div>
   );
-}
+};
 
-export default TimeSlotsTable
+export default TimeSlotsTable;

@@ -2,11 +2,14 @@ import { ICreateBookingInput } from "../interface/IBooking";
 import prisma from "../config/prisma.client";
 import { QueryOptions } from "../utils/pagination";
 import { AppError } from "../utils/app-error";
+import { bumpVersion, getVersion } from "../utils/cache-version";
+import { getCache, setCache } from "../utils/cache";
 
 class BookingService {
 
   async createBooking(data: ICreateBookingInput) {
-  return await prisma.$transaction(async (tx) => {
+
+  const newBooking = await prisma.$transaction(async (tx) => {
 
     const slot = await tx.timeSlot.findUnique({
       where: { id: data.slotId }
@@ -24,7 +27,6 @@ class BookingService {
       throw new AppError("Invalid slot time range",400);
     }
 
-    //prevent double booking
     const updatedSlot = await tx.timeSlot.updateMany({
       where: {
         id: data.slotId,
@@ -39,7 +41,7 @@ class BookingService {
       throw new AppError("Slot already booked", 400);
     }
 
-    const newBooking = await tx.booking.create({
+    return await tx.booking.create({
       data: {
         slotId: data.slotId,
         userId: data.userId,
@@ -51,13 +53,28 @@ class BookingService {
         user: true
       }
     });
-
-    return newBooking;
   });
+
+  await bumpVersion("bookings:version");
+  await bumpVersion("available-slot:version");
+
+  return newBooking;
 }
 
 
   async getBookings(query: QueryOptions, userId?: string) {
+
+    const version = await getVersion("bookings:version")
+    const cacheKey = `bookings:v${version}:${userId || 'admin'}:${JSON.stringify(query)}`
+
+    const cached = await getCache(cacheKey)
+    if (cached) {
+    console.log("cache hit booking");
+    return cached;
+  }
+
+  console.log("cache miss booking");
+
     const { search, skip, limit, order, sortBy, page } = query;
 
     const where = {
@@ -109,7 +126,7 @@ class BookingService {
 
     const total = await prisma.booking.count({ where });
 
-    return {
+    const result = {
       data: bookings,
       pagination: {
         page,
@@ -118,6 +135,9 @@ class BookingService {
         totalPages: Math.ceil(total / limit)
       }
     };
+    await setCache(cacheKey, result, 60);
+
+    return result
   }
 
 
@@ -164,6 +184,8 @@ class BookingService {
 
     });
 
+    await bumpVersion("available-slot:version");
+    await bumpVersion("bookings:version");
     return { message: "Booking cancelled successfully" };
   }
 }

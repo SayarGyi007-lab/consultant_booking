@@ -13,7 +13,7 @@ export const globalLimiter = rateLimit({
 			redis.call(command, ...args) as Promise<RedisReply>,
 	}),
     windowMs: 15 * 60 * 1000,
-    max: 200,
+    max: 2000,
     standardHeaders: true,
     legacyHeaders: false,
     keyGenerator,

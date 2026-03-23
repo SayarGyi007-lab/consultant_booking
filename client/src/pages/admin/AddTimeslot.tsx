@@ -30,6 +30,14 @@ const AddTimeslot = () => {
     const expertiseOptions = Array.from(new Set(consultants.map(c => c.expertise))).filter(Boolean)
 
     const submit: SubmitHandler<formInputs> = async (data) => {
+
+        const start = new Date(data.startTime);
+        const now = new Date();
+
+        if (start <= now) {
+            toast.error("Cannot create a time slot in the past");
+            return;
+        }
         try {
             const { expertise, ...payload } = data
 

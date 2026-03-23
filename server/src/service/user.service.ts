@@ -3,6 +3,8 @@ import bcrypt from 'bcrypt'
 import { IUpdateUser } from "../interface/IUser";
 import { QueryOptions } from "../utils/pagination";
 import { AppError } from "../utils/app-error";
+import { bumpVersion, getVersion } from "../utils/cache-version";
+import { getCache, setCache } from "../utils/cache";
 
 class UserService {
 
@@ -10,20 +12,33 @@ class UserService {
     // Get all users (Admin)
     async getUsers(query: QueryOptions) {
 
+        const version = await getVersion("users:version")
+
+        const cacheKey = `users:v${version}:${JSON.stringify(query)}`
+
+        const cached = await getCache(cacheKey)
+        if (cached) {
+            console.log("cache hit user");
+            return cached;
+        }
+
+        console.log("cache miss user");
+
         const { skip, limit, search, sortBy, order, status } = query; //add role if want to 
 
-        const where = {} as any;
-
-        // if (role) {
-        //     where.role = role;
-        // }
-
-        if (status === "active") {
-            where.deletedAt = null;
-        }
+        const where: any = {
+            deletedAt: null // default = active users
+        };
 
         if (status === "archived") {
             where.deletedAt = { not: null };
+        }
+
+        if (search) {
+            where.OR = [
+                { firstName: { contains: search, mode: "insensitive" } },
+                { lastName: { contains: search, mode: "insensitive" } },
+            ];
         }
 
         if (search) {
@@ -55,12 +70,25 @@ class UserService {
             prisma.user.count({ where })
         ]);
 
-        return { users, total };
+        const result = { users, total }
+        await setCache(cacheKey, result, 60)
+        return result;
     }
 
     // Get single user
     async getUserById(id: string) {
 
+        const version = await getVersion("user:version");
+
+        const cacheKey = `user:v${version}:${id}`;
+
+        const cached = await getCache(cacheKey);
+        if (cached) {
+            console.log("cache hit user by id");
+            return cached;
+        }
+
+        console.log("cache miss user by id");
         const user = await prisma.user.findUnique({
             where: { id },
             select: {
@@ -77,6 +105,8 @@ class UserService {
         if (!user) {
             throw new AppError("User not found", 404);
         }
+
+        await setCache(cacheKey, user, 60)
 
         return user;
     }
@@ -96,6 +126,9 @@ class UserService {
             where: { id },
             data: updateData
         });
+
+        await bumpVersion("users:version");
+        await bumpVersion("user:version");
 
         return updateUser;
     }
@@ -130,6 +163,9 @@ class UserService {
             data: { password: hashedPassword }
         });
 
+        await bumpVersion("users:version");
+        await bumpVersion("user:version");
+
         return { message: "Password updated successfully" };
     }
 
@@ -148,6 +184,9 @@ class UserService {
                 deletedAt: new Date()
             }
         });
+
+        await bumpVersion("users:version");
+        await bumpVersion("user:version");
 
         return {
             success: true,
@@ -174,6 +213,9 @@ class UserService {
             }
         });
 
+        await bumpVersion("users:version");
+        await bumpVersion("user:version");
+
         return {
             success: true,
             message: "User restored successfully"
@@ -185,18 +227,22 @@ class UserService {
         const user = await prisma.user.findUnique({ where: { id } });
 
         if (!user) {
-           throw new AppError("user not found", 404)
+            throw new AppError("user not found", 404)
         }
 
         await prisma.user.delete({
             where: { id }
         });
 
+        await bumpVersion("users:version");
+        await bumpVersion("user:version");
+
         return {
             success: true,
             message: "User permanently deleted"
         };
     }
+
 
 }
 
