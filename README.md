@@ -37,7 +37,7 @@ It demonstrates real-world backend practices such as:
 
 ###  Performance & DevOps
 - Docker support for services
-- Redis integration (for rate-limit / future improvements)
+- Redis integration (for rate-limit & cache / future improvements)
 
 ---
 
@@ -50,24 +50,24 @@ It demonstrates real-world backend practices such as:
 - Zod
 - Redux
 
-### ⚙️ Backend (`server`)
+###  Backend (`server`)
 - Node.js
 - Express.js
 - Prisma ORM
 - Zod
 
-### 🗄️ Database
+###  Database
 - PostgreSQL
 
-### 🔧 Tools
+###  Tools
 - Docker & Docker Compose
 - Redis
 
 ---
 
-## ⚙️ Environment Variables
+##  Environment Variables
 
-### 🔙 Backend (`server/.env`)
+###  Backend (`server/.env`)
 
 PORT=8000
 DATABASE_URL=your_database_url
@@ -89,7 +89,7 @@ VITE_API_URL=http://localhost:8000/api/v1
 
 ##  Getting Started
 
-### 1️⃣ Clone the Repository
+### Clone the Repository
 git clone https://github.com/SayarGyi007-lab/consultant_booking.git
 
 cd consultant_booking
