@@ -122,9 +122,9 @@ npm run dev
 
 ##  Frontend Setup
 
-cd client
-npm install
-npm run dev
+- cd client
+- npm install
+- npm run dev
 
 
 ---
