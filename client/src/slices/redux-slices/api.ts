@@ -36,7 +36,7 @@ export const apiSlice = createApi({
             return headers;
         },
         responseHandler: async (response) => {
-            // Pick up silently refreshed tokens
+            // pick up refreshed tokens
             const newAccessToken = response.headers.get("x-access-token");
             const newRefreshToken = response.headers.get("x-refresh-token");
             if (newAccessToken) localStorage.setItem("accessToken", newAccessToken);
