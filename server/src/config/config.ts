@@ -19,22 +19,37 @@ class Config {
     public CLIENT_URL: string;
 
     public PORT: number;
-    public NODE_ENVIRONMENT: string;
+    public NODE_ENV: string;
     public JWT_REFRESH_SECRET: string;
 
     public ADMIN_PASSWORD: string;
     public ADMIN_EMAIL: string;
 
-    public REDIS_HOST: string;
+    public REDIS_URI: string;
+
+    public REDIS_HOST: string
     public REDIS_PORT: number;
+
+    // public REDIS_PRODUCTION: string;
+    // public REDIS_TOKEN: string
+
 
   constructor() {
     if (!process.env.DATABASE_URL) {
-  throw new Error("DATABASE_URL is not defined");
-}
+      throw new Error("DATABASE_URL is not defined");
+    }
+
+    if (!process.env.DATABASE_URL_PRODUCTION) {
+      throw new Error("DATABASE_URL_PRODUCTION is not defined");
+    }
+
+    // this.REDIS_PRODUCTION = process.env.REDIS_PRODUCTION || ""
+    // // this.REDIS_TOKEN = process.env.REDIS_TOKEN || ""
 
     this.REDIS_HOST = process.env.REDIS_HOST || "localhost";
     this.REDIS_PORT = Number(process.env.REDIS_PORT) || 6379;
+
+    this.REDIS_URI = process.env.REDIS_URI || ""
 
     this.DATABASE_URL = process.env.DATABASE_URL || "";
     this.DATABASE_URL_PRODUCTION = process.env.DATABASE_URL_PRODUCTION || "";
@@ -53,7 +68,7 @@ class Config {
 
     this.PORT = Number(process.env.PORT) || 4000;
 
-    this.NODE_ENVIRONMENT = process.env.NODE_ENVIRONMENT || "development";
+    this.NODE_ENV = process.env.NODE_ENV || "production";
 
     this.ADMIN_EMAIL = process.env.ADMIN_EMAIL || '';
     this.ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || ''
