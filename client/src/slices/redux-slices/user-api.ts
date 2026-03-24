@@ -1,5 +1,5 @@
 import { apiSlice } from "./api";
-import type { loginInputs, registerInputs, QueryParams, updateUserInputs, UsersResponse, User } from "../interfaces/user";
+import type { loginInputs, registerInputs, QueryParams, updateUserInputs, UsersResponse } from "../interfaces/user";
 
 export const userApiSlice = apiSlice.injectEndpoints({
     endpoints: (builder) => ({

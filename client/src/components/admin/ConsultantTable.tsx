@@ -4,7 +4,6 @@ import DeleteWarning from "../../ui/DeleteWarning";
 import Button from "../../ui/Button";
 import { Trash2 } from "lucide-react";
 import { dateOptions, timeOptions } from "../../utils/date-time";
-import { number } from "zod";
 
 interface Props {
   consultants: Consultant[];
