@@ -58,9 +58,10 @@ class AuthService{
             throw new AppError("Invalid email or password", 401);
         }
 
-        generateTokens(res, user.id, user.role);
+        const tokens = generateTokens(user.id, user.role);
 
         return {
+            ...tokens,
             id: user.id,
             firstName: user.firstName,
             lastName: user.lastName,
@@ -72,10 +73,6 @@ class AuthService{
 
     // Logout
     async logout(res: Response) {
-
-        res.clearCookie("accessToken");
-        res.clearCookie("refreshToken");
-
         return { message: "Logged out successfully" };
     }
 }

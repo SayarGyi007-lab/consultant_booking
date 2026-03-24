@@ -1,6 +1,5 @@
 import express from "express"
 import cors from "cors"
-import cookieParser from "cookie-parser"
 import { config } from "./config/config"
 import authRoutes from "./routes/auth.route";
 import userRoutes from "./routes/user.route";
@@ -29,6 +28,7 @@ const corsOptions = {
         }
     },
     credentials: true,
+    exposedHeaders: ["x-access-token", "x-refresh-token"],
 };
 
 app.use(cors(corsOptions))
@@ -36,7 +36,7 @@ app.use(cors(corsOptions))
 export const BaseUrl = '/api/v1'
 
 app.use(express.json())
-app.use(cookieParser())
+
 app.use(express.urlencoded({ extended: true }));
 
 app.use(`${BaseUrl}`, globalLimiter)

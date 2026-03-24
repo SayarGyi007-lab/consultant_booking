@@ -18,21 +18,22 @@ export interface AuthRequest extends Request {
     }
 }
 
-
 const protect = asyncHandler(
     async (req: AuthRequest, res: Response, next: NextFunction) => {
 
-        const accessToken = req.cookies.accessToken;
-        const refreshToken = req.cookies.refreshToken;
+        // Read from Authorization header instead of cookies
+        const authHeader = req.headers.authorization;
+        const accessToken = authHeader?.startsWith("Bearer ") ? authHeader.split(" ")[1] : null;
+        
+        // Read refresh token from request body or custom header
+        const refreshToken = req.headers["x-refresh-token"] as string;
 
         if (!accessToken && !refreshToken) {
-            res.status(401);
             throw new AppError("Unauthorized", 401);
         }
 
         try {
-
-            const decoded = jwt.verify(accessToken, config.JWT_SECRET!) as JwtPayload;
+            const decoded = jwt.verify(accessToken!, config.JWT_SECRET!) as JwtPayload;
 
             const user = await prisma.user.findUnique({
                 where: { id: decoded.id },
@@ -49,18 +50,15 @@ const protect = asyncHandler(
             if (!user) throw new AppError("User not found", 404);
 
             req.user = user;
-
             return next();
 
         } catch (err) {
 
             if (!refreshToken) {
-                res.status(401);
                 throw new AppError("Session expired", 401);
             }
 
             try {
-
                 const decoded = jwt.verify(
                     refreshToken,
                     config.JWT_REFRESH_SECRET!
@@ -78,23 +76,19 @@ const protect = asyncHandler(
                     }
                 });
 
-                if (!user) {
-                    res.status(401);
-                    throw new AppError("User not found", 404);
-                }
+                if (!user) throw new AppError("User not found", 404);
 
-                // reuse your token generator
-                generateTokens(res, user.id, user.role);
+                // Generate new tokens and send back in response header
+                // so frontend can update localStorage
+                const tokens = generateTokens(user.id, user.role);
+                res.setHeader("x-access-token", tokens.accessToken);
+                res.setHeader("x-refresh-token", tokens.refreshToken);
 
                 req.user = user;
-
                 next();
 
             } catch (error) {
-
-                res.status(401);
-                throw new AppError("Refresh token expired, please login again", 400);
-
+                throw new AppError("Refresh token expired, please login again", 401);
             }
         }
     }

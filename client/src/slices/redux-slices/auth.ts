@@ -35,16 +35,32 @@ const initialState: AuthSlice = {
 const authSlice = createSlice({
     name: "auth",
     initialState,
-    reducers:{
-        setUserInfo:(state, action)=>{
-            state.userInfo = action.payload;
-            localStorage.setItem("userInfo",JSON.stringify(action.payload))
-        },
-        clearUserInfo:(state)=>{
-            state.userInfo = null;
-            localStorage.removeItem("userInfo")
-        }
+    // reducers:{
+    //     setUserInfo:(state, action)=>{
+    //         state.userInfo = action.payload;
+    //         localStorage.setItem("userInfo",JSON.stringify(action.payload))
+    //     },
+    //     clearUserInfo:(state)=>{
+    //         state.userInfo = null;
+    //         localStorage.removeItem("userInfo")
+    //     }
+    // }
+    reducers: {
+    setUserInfo: (state, action) => {
+        const { accessToken, refreshToken, ...user } = action.payload;
+        state.userInfo = user;
+        localStorage.setItem("userInfo", JSON.stringify(user));
+   
+        if (accessToken) localStorage.setItem("accessToken", accessToken);
+        if (refreshToken) localStorage.setItem("refreshToken", refreshToken);
+    },
+    clearUserInfo: (state) => {
+        state.userInfo = null;
+        localStorage.removeItem("userInfo");
+        localStorage.removeItem("accessToken");   // 👈 clear tokens on logout
+        localStorage.removeItem("refreshToken");
     }
+}
 })
 
 export const {setUserInfo, clearUserInfo} = authSlice.actions
