@@ -64,7 +64,8 @@ class UserService {
                     email: true,
                     phone: true,
                     role: true,
-                    createdAt: true
+                    createdAt: true,
+                    updatedAt: true
                 }
             }),
             prisma.user.count({ where })
