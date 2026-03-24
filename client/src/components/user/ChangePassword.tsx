@@ -24,6 +24,7 @@ const ChangePasswordCard = ({ onClose }: Props) => {
       toast.success("Password updated successfully");
       onClose();
     } catch (err: any) {
+      console.log("Error from backend:", err);
       toast.error(err?.data?.message || "Failed to change password");
     } finally {
       setLoading(false);
