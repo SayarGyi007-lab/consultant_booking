@@ -15,7 +15,7 @@ const app = express()
 const whitelist = [
     'http://localhost:5173',
     'http://localhost:5174',
-    process.env.CLIENT_URL
+    config.CLIENT_URL
   ].filter(Boolean);
   
 
