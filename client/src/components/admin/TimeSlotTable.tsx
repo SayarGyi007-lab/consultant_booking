@@ -11,6 +11,8 @@ interface Props {
   onDelete?: (id: string, status: "AVAILABLE" | "BOOKED") => void;
   onUpdate: (id: string) => void;
   isDeleting?: boolean;
+  page: number;
+  limit: number
 }
 
 const TimeSlotsTable = ({
@@ -19,6 +21,8 @@ const TimeSlotsTable = ({
   onDelete,
   onUpdate,
   isDeleting,
+  page,
+  limit
 }: Props) => {
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
@@ -60,7 +64,7 @@ const TimeSlotsTable = ({
 
               return (
                 <tr key={slot.id} className="hover:bg-gray-50 text-sm border-b border-gray-100">
-                  <td className="px-4 py-3">{index + 1}</td>
+                  <td className="px-4 py-3">{(page - 1) * limit + index + 1}</td>
 
                   <td className="px-4 py-3 text-xs text-gray-500 font-mono">{slot.id}</td>
 

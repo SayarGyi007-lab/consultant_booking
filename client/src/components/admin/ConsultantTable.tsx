@@ -4,6 +4,7 @@ import DeleteWarning from "../../ui/DeleteWarning";
 import Button from "../../ui/Button";
 import { Trash2 } from "lucide-react";
 import { dateOptions, timeOptions } from "../../utils/date-time";
+import { number } from "zod";
 
 interface Props {
   consultants: Consultant[];
@@ -14,6 +15,8 @@ interface Props {
   onEdit: (id: string) => void;
   isLoading?: boolean;
   status: "active" | "archived";
+  page: number;
+  limit: number
 }
 
 const ConsultantTable = ({
@@ -24,7 +27,9 @@ const ConsultantTable = ({
   onPermanentDelete,
   onEdit,
   isLoading,
-  status
+  status,
+  page,
+  limit
 }: Props) => {
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
@@ -62,7 +67,7 @@ const ConsultantTable = ({
 
               return (
                 <tr key={c.id} className="hover:bg-gray-50 text-sm border-b border-gray-100">
-                  <td className="px-4 py-3">{index + 1}</td>
+                  <td className="px-4 py-3">{(page - 1) * limit + index + 1}</td>
                   <td className="px-4 py-3 text-xs text-gray-500 font-mono">{c.id}</td>
                   <td className="px-4 py-3 whitespace-nowrap font-medium">{c.firstName} {c.lastName}</td>
                   <td className="px-4 py-3">{c.email ?? "—"}</td>

@@ -146,6 +146,8 @@ const Dashboard = () => {
         <RecentBookingsTable
           bookings={bookings.slice(0, 5)}
           title="Recent Bookings"
+          page={1}
+          limit={5}
         />
         <Link
           to="/admin/all-bookings"

@@ -13,6 +13,8 @@ interface Props {
   onPermanentDelete?: (id: string) => void;
   isLoading?: boolean;
   status: "active" | "archived";
+  page: number;
+  limit: number
 }
 
 const UserTable = ({
@@ -22,7 +24,9 @@ const UserTable = ({
   onRestore,
   onPermanentDelete,
   isLoading,
-  status
+  status,
+  page,
+  limit
 }: Props) => {
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
@@ -60,7 +64,7 @@ const UserTable = ({
 
               return (
                 <tr key={user.id} className="hover:bg-gray-50 text-sm border-b border-gray-100">
-                  <td className="px-4 py-3">{index + 1}</td>
+                  <td className="px-4 py-3">{(page - 1) * limit + index + 1}</td>
                   <td className="px-4 py-3 text-xs text-gray-500 font-mono">{user.id}</td>
                   <td className="px-4 py-3 whitespace-nowrap font-medium">
                     {user.firstName} {user.lastName}

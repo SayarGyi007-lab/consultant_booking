@@ -10,6 +10,8 @@ interface Props {
   title?: string;
   onDelete?: (id: string) => void;
   isDeleting?: boolean;
+  page: number;
+  limit: number;
 }
 
 const RecentBookingsTable = ({
@@ -17,6 +19,8 @@ const RecentBookingsTable = ({
   title = "Recent Bookings",
   onDelete,
   isDeleting,
+  page,
+  limit
 }: Props) => {
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
@@ -56,7 +60,7 @@ const RecentBookingsTable = ({
 
               return (
                 <tr key={booking.id} className="hover:bg-gray-50 text-sm border-b border-gray-100">
-                  <td className="px-4 py-3">{index + 1}</td>
+                  <td className="px-4 py-3">{(page - 1) * limit + index + 1}</td>
                   <td className="px-4 py-3 text-xs text-gray-500 font-mono">{booking.id}</td>
                   <td className="px-4 py-3 whitespace-nowrap font-medium">
                     {booking.user
