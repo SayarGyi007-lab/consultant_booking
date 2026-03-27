@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import AuthService from "../service/auth.service";
 import { asyncHandler } from "../utils/async-handler";
 import { AppError } from "../utils/app-error";
+import { AuthRequest } from "../middlewares/authentication";
 
 const authService = new AuthService();
 
@@ -27,6 +28,48 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
     data: result
   });
 });
+
+export const googleLogin = asyncHandler(async (req: Request, res: Response) => {
+  const { idToken } = req.body;
+
+  if (!idToken) {
+    throw new AppError("Google token missing", 400);
+  }
+
+  const result = await authService.googleLogin(idToken);
+
+  res.json({
+    success: true,
+    data: result
+  });
+});
+
+export const updatePhone = asyncHandler(
+  async (req: AuthRequest, res: Response) => {
+    const userId = req.user?.id;
+
+    if (!userId) {
+      throw new AppError("Unauthorized", 401);
+    }
+
+    const { phone } = req.body;
+
+    if (!phone) {
+      throw new AppError("Phone is required", 400);
+    }
+
+    const user = await authService.updatePhone(userId, phone);
+
+    res.json({
+      success: true,
+      message: "Phone updated successfully",
+      data: {
+        id: user.id,
+        phone: user.phone,
+      },
+    });
+  }
+);
 
 
 export const logout = asyncHandler(async (req: Request, res: Response) => {

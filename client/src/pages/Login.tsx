@@ -12,6 +12,7 @@ import type { RootState } from "../store";
 import { toast } from "react-toastify";
 import { setUserInfo } from "../slices/redux-slices/auth";
 import { useEffect } from "react";
+import GoogleButton from "../components/SocialLogin";
 
 type FormInputs = z.infer<typeof loginSchema>
 
@@ -27,23 +28,29 @@ const LoginPage = () => {
 
     const submit: SubmitHandler<FormInputs> = async (data) => {
         try {
-            const res = await login(data).unwrap()
-            dispatch(setUserInfo(res.data))
-            reset()
-            toast.success("Login successfully")
-            console.log(res.data.role);
-            
-            if (res.data.role === "ADMIN") navigate('/admin')
-            else navigate('/home')
+            const res = await login(data).unwrap();
+
+            dispatch(setUserInfo(res.data));
+            reset();
+            toast.success("Login successfully");
+
         } catch (err: any) {
-            toast.error(err?.data?.message || err.message)
+            toast.error(err?.data?.message || err.message);
         }
-    }
+    };
 
     useEffect(() => {
         if (userInfo) {
-            if (userInfo.role === "ADMIN") navigate('/admin')
-            else navigate('/home')
+            if (userInfo.role === "ADMIN") {
+                navigate('/admin')
+                return
+            }
+            if (userInfo.requiresPhone) {
+                navigate("/add-phone");
+                return;
+            }
+
+            navigate('/home');
         }
     }, [navigate, userInfo])
 
@@ -82,6 +89,14 @@ const LoginPage = () => {
                     </Button>
 
                 </form>
+
+                <div className="my-4 flex items-center gap-2">
+                    <div className="flex-1 h-px bg-gray-300" />
+                    <span className="text-sm text-gray-500">OR</span>
+                    <div className="flex-1 h-px bg-gray-300" />
+                </div>
+
+                <GoogleButton />
 
                 <p className="text-center text-sm text-gray-600 mt-6">
                     Don't have an account?{" "}

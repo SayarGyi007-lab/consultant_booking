@@ -53,10 +53,14 @@ const baseQuery = fetchBaseQuery({
     baseUrl,
     prepareHeaders: (headers) => {
         const accessToken = localStorage.getItem("accessToken");
+        const refreshToken = localStorage.getItem("refreshToken");
 
         if (accessToken) {
             headers.set("Authorization", `Bearer ${accessToken}`);
         }
+        if (refreshToken) {
+        headers.set("x-refresh-token", refreshToken);
+    }
 
         return headers;
     }
@@ -75,10 +79,7 @@ const baseQueryWithReauth: BaseQueryFn = async (args, api, extraOptions) => {
         const refreshResult: any = await baseQuery(
             {
                 url: "/auth/refresh",
-                method: "POST",
-                headers: {
-                    "x-refresh-token": refreshToken
-                }
+                method: "POST"
             },
             api,
             extraOptions

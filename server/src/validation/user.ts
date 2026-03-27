@@ -16,7 +16,8 @@ export const createUserSchema = z.object({
     .email("Invalid email format"),
 
   phone: z
-    .string("Phone number is required" )
+    .string()
+    .regex(/^[0-9]+$/, "Phone must contain only digits")
     .min(8, "Phone number must be at least 8 digits")
     .max(15, "Phone number must be less than 15 digits"),
 
@@ -46,6 +47,7 @@ export const updateUserSchema = z.object({
 
   phone: z
     .string()
+    .regex(/^[0-9]+$/, "Phone must contain only digits")
     .min(8, "Phone number must be at least 8 digits")
     .max(15, "Phone number must be less than 15 digits")
     .optional(),
@@ -60,4 +62,12 @@ export const changePasswordSchema = z.object({
   newPassword: z
     .string()
     .min(6, "New password must be at least 6 characters")
+});
+
+export const addPhoneSchema = z.object({
+  phone: z
+    .string("Phone number is required")
+    .regex(/^[0-9]+$/, "Phone must contain only digits")
+    .min(8)
+    .max(15),
 });

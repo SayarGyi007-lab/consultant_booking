@@ -8,6 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { useRegisterMutation } from "../slices/redux-slices/user-api";
 import { toast } from "react-toastify";
+import GoogleButton from "../components/SocialLogin";
 
 type formInputs = z.infer<typeof registerSchema>
 
@@ -92,6 +93,14 @@ const RegisterPage = () => {
                     </Button>
 
                 </form>
+
+                <div className="my-4 flex items-center gap-2">
+                    <div className="flex-1 h-px bg-gray-300" />
+                    <span className="text-sm text-gray-500">OR</span>
+                    <div className="flex-1 h-px bg-gray-300" />
+                </div>
+
+                <GoogleButton />
 
                 <p className="text-center text-sm text-gray-600 mt-6">
                     Already have an account?{" "}

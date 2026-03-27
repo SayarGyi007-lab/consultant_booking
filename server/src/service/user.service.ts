@@ -145,6 +145,10 @@ class UserService {
             throw new AppError("User not found", 404);
         }
 
+        if (!user.password) {
+            throw new AppError("Please login with Google", 400);
+        }
+
         const match = await bcrypt.compare(currentPassword, user.password);
 
         if (!match) {

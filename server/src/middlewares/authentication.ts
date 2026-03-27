@@ -1,4 +1,3 @@
-import { Role } from "@prisma/client";
 import { config } from "../config/config";
 import prisma from "../config/prisma.client";
 import { NextFunction, Request, Response } from "express";
@@ -7,14 +6,15 @@ import { asyncHandler } from "../utils/async-handler";
 import generateTokens from "../utils/token";
 import { AppError } from "../utils/app-error";
 
+
 export interface AuthRequest extends Request {
     user?: {
         id: string
         firstName: string
         lastName: string
         email: string
-        phone: string
-        role: Role
+        phone: string | null
+        role: "USER" | "ADMIN"
     }
 }
 

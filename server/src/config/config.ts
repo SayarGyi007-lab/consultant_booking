@@ -30,6 +30,8 @@ class Config {
     public REDIS_HOST: string
     public REDIS_PORT: number;
 
+    public GOOGLE_CLIENT_ID: string;
+
     // public REDIS_PRODUCTION: string;
     // public REDIS_TOKEN: string
 
@@ -72,6 +74,8 @@ class Config {
 
     this.ADMIN_EMAIL = process.env.ADMIN_EMAIL || '';
     this.ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || ''
+
+    this.GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || ''
   }
 }
 

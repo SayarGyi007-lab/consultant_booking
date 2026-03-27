@@ -5,8 +5,9 @@ interface UserInfo {
   email: string
   firstName: string
   lastName: string
-  phone: string
+  phone: string | null
   role: "ADMIN" | "USER"
+  requiresPhone?: boolean;
 }
 
 interface AuthSlice{
@@ -57,7 +58,7 @@ const authSlice = createSlice({
     clearUserInfo: (state) => {
         state.userInfo = null;
         localStorage.removeItem("userInfo");
-        localStorage.removeItem("accessToken");   // 👈 clear tokens on logout
+        localStorage.removeItem("accessToken");   // clear tokens on logout
         localStorage.removeItem("refreshToken");
     }
 }

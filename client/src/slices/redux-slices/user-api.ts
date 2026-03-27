@@ -12,6 +12,22 @@ export const userApiSlice = apiSlice.injectEndpoints({
             }),
             invalidatesTags: ["Users"]
         }),
+        googleLogin: builder.mutation({
+            query: (idToken: string) => ({
+                url: "auth/google",
+                method: "POST",
+                body: { idToken }
+            }),
+            invalidatesTags: ["Users"]
+        }),
+        updatePhone: builder.mutation({
+            query: (phone: string) => ({
+                url: "auth/update-phone",
+                method: "PATCH",
+                body: { phone }
+            }),
+            invalidatesTags: ["Users"]
+        }),
         register: builder.mutation({
             query: (data: registerInputs) => ({
                 url: "auth/register",
@@ -128,5 +144,7 @@ export const {
     useChangePasswordMutation,
     useArchiveUserMutation,
     useRestoreUserMutation,
-    usePermanentDeleteUserMutation
+    usePermanentDeleteUserMutation,
+    useGoogleLoginMutation,
+    useUpdatePhoneMutation
 } = userApiSlice

@@ -24,6 +24,8 @@ import {
   Profile, 
   RegisterPage } from './constant/lazyload.ts'
 import Protect from './components/Protect.tsx'
+import { GoogleOAuthProvider } from '@react-oauth/google'
+import AddPhonePage from './pages/AddPhone.tsx'
 
 const router = createBrowserRouter([
   {
@@ -66,6 +68,10 @@ const router = createBrowserRouter([
         path: '/consultants/:id',
         element: <ConsultantInfo/>
       },
+      {
+  path: "/add-phone",
+  element: <AddPhonePage />
+},
 
 
       //admin
@@ -110,11 +116,13 @@ const router = createBrowserRouter([
     ]
   }
 ])
-
+console.log(import.meta.env.VITE_GOOGLE_CLIENT_ID);
 createRoot(document.getElementById('root')!).render(
-  <StrictMode>
+  // <StrictMode>
     <Provider store={store}>
-      <RouterProvider router={router} />
+      <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+        <RouterProvider router={router} />
+      </GoogleOAuthProvider>
     </Provider>
-  </StrictMode>,
+  // </StrictMode>,
 )

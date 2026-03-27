@@ -9,7 +9,7 @@ class BookingService {
 
   async createBooking(data: ICreateBookingInput) {
 
-  const newBooking = await prisma.$transaction(async (tx) => {
+  const newBooking = await prisma.$transaction(async (tx: any) => {
 
     const slot = await tx.timeSlot.findUnique({
       where: { id: data.slotId }
