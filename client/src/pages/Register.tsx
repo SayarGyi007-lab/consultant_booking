@@ -47,7 +47,7 @@ const RegisterPage = () => {
                     <FormInput
                         label="First Name"
                         type="text"
-                        placeholder="John"
+                        placeholder="First Name"
                         {...register('firstName')}
                     />
                     {errors.firstName && <span className="text-red-400 text-sm font-medium">{errors.firstName.message}</span>}
@@ -56,7 +56,7 @@ const RegisterPage = () => {
                     <FormInput
                         label="Last Name"
                         type="text"
-                        placeholder="Doe"
+                        placeholder="Last Name"
                         {...register('lastName')}
                     />
                     {errors.lastName && <span className="text-red-400 text-sm font-medium">{errors.lastName.message}</span>}
