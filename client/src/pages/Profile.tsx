@@ -47,7 +47,7 @@ const Profile = () => {
   if (error || !user)
     return <p className="text-gray-400 text-center mt-10">Failed to load profile.</p>;
 
-  // ✅ Admin check
+  // Admin check
   const isAdmin = user.role === "ADMIN";
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

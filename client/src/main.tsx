@@ -4,25 +4,26 @@ import './index.css'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import { Provider } from 'react-redux'
 import { store } from './store.ts'
-import { 
-  AddConsultant, 
-  AddTimeslot, 
-  AdminLayout, 
-  AllBooking, 
-  AllConsultant, 
-  AllConsultants, 
-  AllTimeslot, 
-  AllUser, 
-  Booking, 
-  ConsultantInfo, 
-  Dashboard, 
-  Home, 
-  LandingPage, 
-  LoginPage, 
-  Main, 
-  MyBookings, 
-  Profile, 
-  RegisterPage } from './constant/lazyload.ts'
+import {
+  AddConsultant,
+  AddTimeslot,
+  AdminLayout,
+  AllBooking,
+  AllConsultant,
+  AllConsultants,
+  AllTimeslot,
+  AllUser,
+  Booking,
+  ConsultantInfo,
+  Dashboard,
+  Home,
+  LandingPage,
+  LoginPage,
+  Main,
+  MyBookings,
+  Profile,
+  RegisterPage
+} from './constant/lazyload.ts'
 import Protect from './components/Protect.tsx'
 import { GoogleOAuthProvider } from '@react-oauth/google'
 import AddPhonePage from './pages/AddPhone.tsx'
@@ -58,34 +59,33 @@ const router = createBrowserRouter([
       },
       {
         path: '/my-bookings',
-        element: <MyBookings/>
+        element: <MyBookings />
       },
       {
         path: '/all-consultants',
-        element: <AllConsultants/>
+        element: <AllConsultants />
       },
       {
         path: '/consultants/:id',
-        element: <ConsultantInfo/>
+        element: <ConsultantInfo />
       },
       {
-  path: "/add-phone",
-  element: <AddPhonePage />
-},
-
+        path: "/add-phone",
+        element: <AddPhonePage />
+      },
 
       //admin
       {
         path: "/admin",
         element: <Protect adminOnly={true}><AdminLayout /></Protect>,
         children: [
-          { 
-            index: true, 
-            element: <Dashboard /> 
+          {
+            index: true,
+            element: <Dashboard />
           },
-          { 
-            path: "create-consultant", 
-            element: <AddConsultant /> 
+          {
+            path: "create-consultant",
+            element: <AddConsultant />
           },
           {
             path: "all-bookings",
@@ -116,13 +116,12 @@ const router = createBrowserRouter([
     ]
   }
 ])
-console.log(import.meta.env.VITE_GOOGLE_CLIENT_ID);
 createRoot(document.getElementById('root')!).render(
-  // <StrictMode>
-    <Provider store={store}>
-      <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
-        <RouterProvider router={router} />
-      </GoogleOAuthProvider>
-    </Provider>
-  // </StrictMode>,
+  <StrictMode>
+  <Provider store={store}>
+    <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+      <RouterProvider router={router} />
+    </GoogleOAuthProvider>
+  </Provider>
+  </StrictMode>,
 )
