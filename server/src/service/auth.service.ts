@@ -65,7 +65,7 @@ class AuthService {
 
         const { accessToken, refreshToken } = generateTokens(user.id, user.role);
 
-        // ✅ store refresh token only
+        // store refresh token only
         await redis.set(
             `rt:${refreshToken}`,
             user.id.toString(),
@@ -139,7 +139,7 @@ class AuthService {
         throw new AppError("Refresh token not recognized", 401);
     }
 
-    // ✅ rotate token
+    //rotate token
     await redis.del(`rt:${refreshToken}`);
 
     const { accessToken, refreshToken: newRefreshToken } =
