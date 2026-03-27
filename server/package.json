@@ -26,7 +26,8 @@
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^25.5.0",
     "dotenv": "^17.3.1",
-    "prisma": "^7.5.0"
+    "prisma": "^7.5.0",
+    "typescript": "5.4.5"
   },
   "scripts": {
     "dev": "nodemon --exec ts-node src/app.ts",
