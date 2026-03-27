@@ -34,12 +34,12 @@ class UserService {
             where.deletedAt = { not: null };
         }
 
-        if (search) {
-            where.OR = [
-                { firstName: { contains: search, mode: "insensitive" } },
-                { lastName: { contains: search, mode: "insensitive" } },
-            ];
-        }
+        // if (search) {
+        //     where.OR = [
+        //         { firstName: { contains: search, mode: "insensitive" } },
+        //         { lastName: { contains: search, mode: "insensitive" } },
+        //     ];
+        // }
 
         if (search) {
             where.OR = [

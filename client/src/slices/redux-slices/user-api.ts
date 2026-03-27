@@ -21,15 +21,22 @@ export const userApiSlice = apiSlice.injectEndpoints({
             invalidatesTags: ["Users"]
         }),
         logout: builder.mutation({
-            query: () => ({
-                url: "auth/logout",
-                method: "POST"
-            }),
+            query: () => {
+                const refreshToken = localStorage.getItem("refreshToken");
+
+                return {
+                    url: "auth/logout",
+                    method: "POST",
+                    headers: {
+                        "x-refresh-token": refreshToken || ""
+                    }
+                };
+            },
             invalidatesTags: ["Users"]
         }),
 
         //others
-        getme: builder.query<UsersResponse,void>({
+        getme: builder.query<UsersResponse, void>({
             query: () => ({
                 url: "users/me",
                 method: "GET"

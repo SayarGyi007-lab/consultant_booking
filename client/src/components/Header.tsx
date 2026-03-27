@@ -16,11 +16,13 @@ function Header() {
 
   const logoutHandler = async () => {
     try {
-      await logout(userInfo);
-      dispatch(clearUserInfo());
-      navigate("/");
+      await logout(userInfo).unwrap();
+      
     } catch (error) {
       console.log(error);
+    }finally{
+      dispatch(clearUserInfo());
+      navigate("/");
     }
   };
 
