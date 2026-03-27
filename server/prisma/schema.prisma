@@ -1,6 +1,5 @@
 generator client {
   provider = "prisma-client-js"
-  
 }
 
 datasource db {
@@ -13,12 +12,12 @@ model User {
   lastName  String
   email     String    @unique
   password  String?
-  googleId  String?   @unique
   role      Role      @default(USER)
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
-  phone     String?    @unique
+  phone     String?   @unique
   deletedAt DateTime?
+  googleId  String?   @unique
   bookings  Booking[]
 }
 
@@ -30,9 +29,9 @@ model Consultant {
   expertise String
   createdAt DateTime   @default(now())
   phone     String     @unique
-  slots     TimeSlot[]
   deletedAt DateTime?
-  updatedAt DateTime @default(now()) @updatedAt
+  updatedAt DateTime   @default(now()) @updatedAt
+  slots     TimeSlot[]
 }
 
 model TimeSlot {
@@ -42,7 +41,7 @@ model TimeSlot {
   endTime      DateTime
   status       SlotStatus @default(AVAILABLE)
   createdAt    DateTime   @default(now())
-  updatedAt    DateTime @default(now()) @updatedAt
+  updatedAt    DateTime   @default(now()) @updatedAt
   booking      Booking?
   consultant   Consultant @relation(fields: [consultantId], references: [id])
 }
