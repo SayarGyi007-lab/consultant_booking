@@ -172,75 +172,64 @@ class AuthService {
         };
     }
 
-    async googleLogin(code: string) {
-
-        console.log("REDIRECT URI:", config.CLIENT_URL);
-        // Verify Google token
-        const { tokens } = await client.getToken({
-            code,
-            redirect_uri: "https://consultant-booking-kappa.vercel.app/auth/google/callback"
-        })
-    if (!tokens.id_token) {
-        throw new AppError("Failed to get id_token from Google", 401);
-    }
+    async googleLogin(idToken: string) {
 
     const ticket = await client.verifyIdToken({
-        idToken: tokens.id_token,
+        idToken,
         audience: config.GOOGLE_CLIENT_ID,
     });
 
-        const payload = ticket.getPayload();
+    const payload = ticket.getPayload();
 
-        if (!payload || !payload.email) {
-            throw new AppError("Invalid Google token", 401);
-        }
-
-        const { email, given_name, family_name, sub: googleId } = payload;
-
-        let user = await prisma.user.findUnique({
-            where: { email }
-        });
-
-        // If user exists but no googleId, link account
-        if (user && !user.googleId) {
-            user = await prisma.user.update({
-                where: { id: user.id },
-                data: { googleId }
-            });
-        }
-
-        if (!user) {
-            user = await prisma.user.create({
-                data: {
-                    email,
-                    firstName: given_name || "Google",
-                    lastName: family_name || "User",
-                    googleId,
-                    password: null,
-                }
-            });
-        }
-
-        const { accessToken, refreshToken } = generateTokens(user.id, user.role);
-
-        await redis.set(
-            `rt:${refreshToken}`,
-            user.id.toString(),
-            "EX",
-            7 * 24 * 60 * 60
-        );
-        
-        return {
-            accessToken,
-            refreshToken,
-            id: user.id,
-            firstName: user.firstName,
-            lastName: user.lastName,
-            email: user.email,
-            role: user.role,
-            requiresPhone: !user.phone
-        };
+    if (!payload || !payload.email) {
+        throw new AppError("Invalid Google token", 401);
     }
+
+    const { email, given_name, family_name, sub: googleId } = payload;
+
+    let user = await prisma.user.findUnique({
+        where: { email }
+    });
+
+    if (user && !user.googleId) {
+        user = await prisma.user.update({
+            where: { id: user.id },
+            data: { googleId }
+        });
+    }
+
+    if (!user) {
+        user = await prisma.user.create({
+            data: {
+                email,
+                firstName: given_name || "Google",
+                lastName: family_name || "User",
+                googleId,
+                password: null,
+            }
+        });
+    }
+
+    const { accessToken, refreshToken } = generateTokens(user.id, user.role);
+
+    await redis.set(
+        `rt:${refreshToken}`,
+        user.id.toString(),
+        "EX",
+        7 * 24 * 60 * 60
+    );
+
+    return {
+        accessToken,
+        refreshToken,
+        id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        role: user.role,
+        requiresPhone: !user.phone
+    };
+}
 
     //for oauth
     async updatePhone(userId: string, phone: string) {

@@ -28,7 +28,6 @@ import {
 import Protect from './components/Protect.tsx'
 import { GoogleOAuthProvider } from '@react-oauth/google'
 import AddPhonePage from './pages/AddPhone.tsx'
-import GoogleCallback from './pages/GoogleCallback.tsx'
 
 const router = createBrowserRouter([
   {
@@ -80,7 +79,6 @@ const router = createBrowserRouter([
         element: <Reviews/>
       },
 
-      { path: '/auth/google/callback', element: <GoogleCallback /> },
 
       //admin
       {
