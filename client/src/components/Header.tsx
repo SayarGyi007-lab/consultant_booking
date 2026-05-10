@@ -1,10 +1,10 @@
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../store";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useLogoutMutation } from "../slices/redux-slices/user-api";
 import { clearUserInfo } from "../slices/redux-slices/auth";
 import { LogIn, LogOut, Menu, UserPlus, X } from "lucide-react";
-import Button from '../ui/Button';
+import Button from '../ui/components/Button';
 import { useState } from "react";
 
 function Header() {
@@ -26,13 +26,23 @@ function Header() {
     }
   };
 
+  const navLinkClass = ({ isActive }: { isActive: boolean }) =>
+  isActive
+    ? "text-indigo-600 font-semibold underline"
+    : "hover:underline text-lg transition";
+
+  const mobileNavLinkClass = ({ isActive }: { isActive: boolean }) =>
+  isActive
+    ? "text-yellow-400 font-semibold"
+    : "hover:underline text-base";
+
   return (
-    <header className="bg-black shadow-md">
-      <nav className="flex justify-between items-center px-6 py-4 text-gray-50">
+    <header className="bg-white shadow-md static text-gray-500">
+      <nav className="flex justify-between items-center px-6 py-4 ">
 
         <Link
           to={userInfo ? (userInfo.role === 'ADMIN' ? "/admin" : "/home") : "/"}
-          className="text-2xl font-extrabold tracking-wide"
+          className="text-3xl text-indigo-600 font-extrabold tracking-wide"
         >
           Consultify
         </Link>
@@ -42,17 +52,19 @@ function Header() {
           {userInfo ? (
             userInfo.role === 'ADMIN' ? (
               <>
-                <Link to="/admin/profile" className="hover:underline text-lg transition">
+                <NavLink to="/admin/profile" className={navLinkClass}>
                   Profile
-                </Link>
+                </NavLink>
                 <Button onClick={logoutHandler} variant="secondary" disabled={isLoading}>
                   Logout <LogOut size={18} />
                 </Button>
               </>
             ) : (
               <>
-                <Link to="/booking" className="hover:underline text-lg transition">Booking</Link>
-                <Link to="/profile" className="hover:underline text-lg transition">Profile</Link>
+                <NavLink to="/home" className={navLinkClass}>Home</NavLink>
+                <NavLink to="/all-consultants" className={navLinkClass}>Consultants</NavLink>
+                <NavLink to="/my-bookings" className={navLinkClass}>Booking</NavLink>
+                <NavLink to="/profile" className={navLinkClass}>Profile</NavLink>
                 <Button onClick={logoutHandler} variant="secondary" disabled={isLoading}>
                   Logout <LogOut size={18} />
                 </Button>
@@ -62,13 +74,13 @@ function Header() {
             <>
               <Link
                 to="/login"
-                className="flex items-center gap-2 bg-gray-600 px-4 py-2 rounded-lg hover:bg-gray-800 transition"
+                className="flex items-center gap-2 bg-gray-700 text-gray-200 hover:bg-gray-600 px-4 py-2 rounded-lg transition"
               >
                 <LogIn size={18} /> Login
               </Link>
               <Link
                 to="/register"
-                className="flex items-center gap-2 bg-yellow-400 text-black font-semibold px-4 py-2 rounded-lg hover:bg-yellow-300 transition"
+                className="flex items-center gap-2 bg-[#24389c] text-white font-semibold px-4 py-2 rounded-lg hover:bg-[#24389c]/80 transition"
               >
                 <UserPlus size={18} /> Register
               </Link>
@@ -76,7 +88,7 @@ function Header() {
           )}
         </div>
 
-        {/* Mobile Hamburger */}
+        {/* mobile humberger */}
         <button
           className="md:hidden text-gray-50 focus:outline-none"
           onClick={() => setMenuOpen(!menuOpen)}
@@ -85,23 +97,25 @@ function Header() {
         </button>
       </nav>
 
-      {/* Mobile Dropdown */}
+      {/* mobile dropdown */}
       {menuOpen && (
         <div className="md:hidden bg-black border-t border-gray-700 px-6 pb-4 flex flex-col gap-4 text-gray-50">
           {userInfo ? (
             userInfo.role === 'ADMIN' ? (
               <>
-                <Link to="/admin/profile" className="hover:underline text-base" onClick={() => setMenuOpen(false)}>
+                <NavLink to="/admin/profile" className="hover:underline text-base" onClick={() => setMenuOpen(false)}>
                   Profile
-                </Link>
+                </NavLink>
                 <Button onClick={() => { logoutHandler(); setMenuOpen(false); }} variant="secondary" disabled={isLoading}>
                   Logout <LogOut size={18} />
                 </Button>
               </>
             ) : (
               <>
-                <Link to="/booking" className="hover:underline text-base" onClick={() => setMenuOpen(false)}>Booking</Link>
-                <Link to="/profile" className="hover:underline text-base" onClick={() => setMenuOpen(false)}>Profile</Link>
+                <NavLink to="/home" className="hover:underline text-base" onClick={() => setMenuOpen(false)}>Home</NavLink>
+                <NavLink to="/all-consultants" className="hover:underline text-base" onClick={() => setMenuOpen(false)}>Consultants</NavLink>
+                <NavLink to="/my-bookings" className="hover:underline text-base" onClick={() => setMenuOpen(false)}>Booking</NavLink>
+                <NavLink to="/profile" className="hover:underline text-base" onClick={() => setMenuOpen(false)}>Profile</NavLink>
                 <Button onClick={() => { logoutHandler(); setMenuOpen(false); }} variant="secondary" disabled={isLoading}>
                   Logout <LogOut size={18} />
                 </Button>

@@ -22,7 +22,8 @@ import {
   Main,
   MyBookings,
   Profile,
-  RegisterPage
+  RegisterPage,
+  Reviews
 } from './constant/lazyload.ts'
 import Protect from './components/Protect.tsx'
 import { GoogleOAuthProvider } from '@react-oauth/google'
@@ -72,6 +73,10 @@ const router = createBrowserRouter([
       {
         path: "/add-phone",
         element: <AddPhonePage />
+      },
+      {
+        path: "consultants/:consultantId/reviews",
+        element: <Reviews/>
       },
 
       //admin

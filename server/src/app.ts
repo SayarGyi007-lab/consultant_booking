@@ -8,6 +8,11 @@ import timeSlotRoutes from './routes/time-slot.route'
 import bookingRoutes from './routes/booking.route'
 import errorHandler from './middlewares/error-handler'
 import { globalLimiter } from "./middlewares/rate-limit";
+import reviewRoutes from './routes/review.route'
+import chatRoutes from './routes/chat.route'
+import { startBookingCompletionJob } from "./job/booking.job";
+import { startTimeSlotExpirationJob } from "./job/slot.job";
+
 
 const app = express()
 
@@ -47,6 +52,8 @@ app.use(`${BaseUrl}/users`, userRoutes);
 app.use(`${BaseUrl}/consultants`, consultantRoutes)
 app.use(`${BaseUrl}/time-slots`,timeSlotRoutes)
 app.use(`${BaseUrl}/bookings`, bookingRoutes)
+app.use(`${BaseUrl}/reviews`, reviewRoutes)
+app.use(`${BaseUrl}/chat`, chatRoutes)
 
 app.use(errorHandler)
 
@@ -54,5 +61,7 @@ const PORT = config.PORT ||  4000;
 
 app.listen(PORT,() => {
   console.log("Server is running on PORT", PORT);
+  startBookingCompletionJob()
+  startTimeSlotExpirationJob()
 });
 

@@ -2,8 +2,8 @@ import * as z from "zod";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "react-toastify";
-import Button from "../../ui/Button";
-import FormInput from "../../ui/FormInput";
+import Button from "../../ui/components/Button";
+import FormInput from "../../ui/components/FormInput";
 import { useUpdateTimeSlotMutation } from "../../slices/redux-slices/time-slot-api";
 import type { TimeSlot } from "../../slices/interfaces/time-slot";
 import { updateTimeSlotSchema } from "../../validation/time-slot";
@@ -28,7 +28,7 @@ const UpdateTimeSlot = ({ slot, onClose }: Props) => {
     resolver: zodResolver(updateTimeSlotSchema),
     defaultValues: {
       startTime: toLocalDatetime(slot.startTime),
-      endTime: toLocalDatetime(slot.endTime),
+      // endTime: toLocalDatetime(slot.endTime),
     },
   });
 
@@ -39,7 +39,7 @@ const UpdateTimeSlot = ({ slot, onClose }: Props) => {
       await updateTimeSlot({
         id: slot.id,
         startTime: data.startTime ? new Date(data.startTime).toISOString() : undefined,
-        endTime: data.endTime ? new Date(data.endTime).toISOString() : undefined,
+        // endTime: data.endTime ? new Date(data.endTime).toISOString() : undefined,
       }).unwrap();
 
       toast.success("Time slot updated successfully");
@@ -66,13 +66,6 @@ const UpdateTimeSlot = ({ slot, onClose }: Props) => {
             {...register("startTime")}
           />
           {errors.startTime && <span className="text-red-400 text-sm font-medium">{errors.startTime.message}</span>}
-
-          <FormInput
-            label="End Time"
-            type="datetime-local"
-            {...register("endTime")}
-          />
-          {errors.endTime && <span className="text-red-400 text-sm font-medium">{errors.endTime.message}</span>}
 
           <div className="flex gap-4">
             <Button

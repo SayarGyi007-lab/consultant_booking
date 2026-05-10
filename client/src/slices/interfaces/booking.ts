@@ -7,6 +7,10 @@ export interface CreateBookingInputs {
   customerEmail: string
 }
 
+export interface UpdateBookingInputs {
+  status?: "CONFIRMED" | "CANCELLED" | "COMPLETED";
+}
+
 export interface Booking {
   id: string
   slotId: string
@@ -14,6 +18,14 @@ export interface Booking {
   customerName: string
   customerEmail: string
   createdAt: string
+  status: "CONFIRMED" | "CANCELLED" | "COMPLETED"
+
+  review?: {  
+    id: string
+    rating: number
+    comment?: string | null
+    createdAt: string
+  }
 
   slot?: {
     id: string

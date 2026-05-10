@@ -7,31 +7,40 @@ datasource db {
 }
 
 model User {
-  id        String    @id @default(uuid())
-  firstName String
-  lastName  String
-  email     String    @unique
-  password  String?
-  role      Role      @default(USER)
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  phone     String?   @unique
-  deletedAt DateTime?
-  googleId  String?   @unique
-  bookings  Booking[]
+  id           String        @id @default(uuid())
+  firstName    String
+  lastName     String
+  email        String        @unique
+  password     String?
+  role         Role          @default(USER)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  phone        String?       @unique
+  deletedAt    DateTime?
+  googleId     String?       @unique
+  bookings     Booking[]
+  reviews      Review[]
+  chatSessions ChatSession[]
 }
 
 model Consultant {
-  id        String     @id @default(uuid())
-  firstName String
-  lastName  String
-  email     String     @unique
-  expertise String
-  createdAt DateTime   @default(now())
-  phone     String     @unique
-  deletedAt DateTime?
-  updatedAt DateTime   @default(now()) @updatedAt
-  slots     TimeSlot[]
+  id         String   @id @default(uuid())
+  firstName  String
+  lastName   String
+  email      String   @unique
+  expertise  String
+  bio        String // AI explanation
+  skills     String[] // AI matching
+  experience Int // years
+  price       Float @default(0)
+  rating      Float? // computed
+  reviewCount Int? // computed
+  createdAt   DateTime   @default(now())
+  phone       String     @unique
+  deletedAt   DateTime?
+  updatedAt   DateTime   @default(now()) @updatedAt
+  slots       TimeSlot[]
+  reviews     Review[]
 }
 
 model TimeSlot {
@@ -47,15 +56,56 @@ model TimeSlot {
 }
 
 model Booking {
-  id            String   @id @default(uuid())
-  slotId        String   @unique
+  id            String        @id @default(uuid())
+  slotId        String    @unique    
   userId        String?
   customerName  String
   customerEmail String
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @default(now()) @updatedAt
-  slot          TimeSlot @relation(fields: [slotId], references: [id])
-  user          User?    @relation(fields: [userId], references: [id])
+  status        BookingStatus @default(CONFIRMED)
+  review        Review?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @default(now()) @updatedAt
+  slot          TimeSlot      @relation(fields: [slotId], references: [id])
+  user          User?         @relation(fields: [userId], references: [id])
+}
+
+model Review {
+  id           String @id @default(uuid())
+
+  consultantId String
+  userId       String
+  bookingId    String @unique  // ✅ NEW
+
+  rating  Int
+  comment String?
+
+  createdAt DateTime @default(now())
+  updatedAt    DateTime   @default(now()) @updatedAt
+  consultant Consultant @relation(fields: [consultantId], references: [id])
+  user       User       @relation(fields: [userId], references: [id])
+  booking    Booking    @relation(fields: [bookingId], references: [id])
+
+  @@index([consultantId])
+}
+
+model ChatMessage {
+  id        String   @id @default(uuid())
+  sessionId String
+  userId    String?
+  role      ChatRole
+  content   String
+  createdAt DateTime @default(now())
+
+  session ChatSession @relation(fields: [sessionId], references: [id])
+}
+
+model ChatSession {
+  id        String   @id @default(uuid())
+  userId    String
+  createdAt DateTime @default(now())
+
+  user     User          @relation(fields: [userId], references: [id])
+  messages ChatMessage[]
 }
 
 enum Role {
@@ -66,4 +116,16 @@ enum Role {
 enum SlotStatus {
   AVAILABLE
   BOOKED
+  EXPIRED
+}
+
+enum BookingStatus {
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+}
+
+enum ChatRole {
+  USER
+  ASSISTANT
 }

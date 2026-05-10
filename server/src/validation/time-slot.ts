@@ -10,11 +10,9 @@ export const createTimeSlotSchema = z.object({
     .string("Start time is required" )
     .datetime("Start time must be a valid ISO datetime"),
 
-  endTime: z
-    .string( "End time is required" )
-    .datetime("End time must be a valid ISO datetime"),
-
-  status: slotStatusEnum.optional()
+  // endTime: z
+  //   .string( "End time is required" )
+  //   .datetime("End time must be a valid ISO datetime"),
 });
 
 export const updateTimeSlotSchema = z.object({
@@ -24,10 +22,8 @@ export const updateTimeSlotSchema = z.object({
     .datetime("Start time must be a valid ISO datetime")
     .optional(),
 
-  endTime: z
-    .string( "End time is required" )
-    .datetime("End time must be a valid ISO datetime")
-    .optional(),
-
-  status: slotStatusEnum.optional()
+  // endTime: z
+  //   .string( "End time is required" )
+  //   .datetime("End time must be a valid ISO datetime")
+  //   .optional(),
 });

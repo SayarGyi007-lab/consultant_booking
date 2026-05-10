@@ -1,9 +1,9 @@
 import { useState, useEffect, useMemo } from 'react';
 import useDebounce from '../../hooks/useDebounce';
 import { useConsultants } from '../../hooks/useConsultants';
-import ConsultantTable from '../../components/admin/ConsultantTable';
+import ConsultantTable from '../../components/admin/ConsultantGrid';
 import UpdateConsultant from '../../components/admin/UpdateConsultant';
-import Button from '../../ui/Button';
+import Button from '../../ui/components/Button';
 import Alert from '../../ui/Alert';
 import StatusToggle from '../../ui/Toggle';
 import {
@@ -21,7 +21,7 @@ const AllConsultant = () => {
   const [expertise, setExpertise] = useState("");
   const [editingConsultantId, setEditingConsultantId] = useState<string | null>(null);
 
-  const limit = 10;
+  const limit = 6;
   const debounceSearch = useDebounce(search, 500);
 
   const { consultants, consultantsPagination } = useConsultants({
@@ -115,7 +115,12 @@ const AllConsultant = () => {
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 gap-4">
         <StatusToggle
           value={status}
-          onChange={(val) => { setStatus(val); setExpertise(""); setPage(1); }}
+          options={["active", "archived"]}
+          onChange={setStatus}
+          labels={{
+            active: "Active",
+            archived: "Archived",
+          }}
         />
 
         <div className="flex gap-2">

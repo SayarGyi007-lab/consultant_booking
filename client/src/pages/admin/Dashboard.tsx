@@ -1,5 +1,5 @@
 import { Users, UserCheck, CalendarCheck, Plus, ArrowRight } from "lucide-react";
-import Button from "../../ui/Button";
+import Button from "../../ui/components/Button";
 import AnimatedCard from "../../ui/AnimateCard";
 import FeatureCard from "../../ui/FeatureCard";
 import { Link, useNavigate } from "react-router-dom";
@@ -8,7 +8,7 @@ import { DashboardStats } from "../../utils/dashboard-stats";
 import { useConsultants } from "../../hooks/useConsultants";
 import { useBookings } from "../../hooks/useBookings";
 import { useTimeSlots } from "../../hooks/useTimeSlots";
-import RecentBookingsTable from "../../components/admin/BookingTable";
+import RecentBookingsTable from "../../components/admin/BookingGrid";
 
 const Dashboard = () => {
 
@@ -29,6 +29,7 @@ const Dashboard = () => {
     timeslotsPagination?.total ?? 0 
   );
 
+  
   const submitConsultant = () => {
     navigate('/admin/create-consultant')
   }
@@ -141,7 +142,7 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* RECENT BOOKINGS */}
+      {/* recent booking */}
       <div >
         <RecentBookingsTable
           bookings={bookings.slice(0, 5)}

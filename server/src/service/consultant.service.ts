@@ -19,7 +19,9 @@ class ConsultantService {
       throw new AppError("This consultant exists", 400);
     }
 
-    const consultant = await prisma.consultant.create({ data });
+  
+
+    const consultant = await prisma.consultant.create({data});
 
     await bumpVersion("consultants:version");
     await bumpVersion("consultant:version");
@@ -40,7 +42,7 @@ class ConsultantService {
 
     console.log("cache miss consultants");
 
-    const { skip, limit, search, sortBy, order, expertise, status } = query;
+    const { skip, limit, search, sortBy, order, expertise, status, available } = query;
 
     const where: any = {};
 
@@ -58,6 +60,13 @@ class ConsultantService {
         { lastName: { contains: search, mode: "insensitive" } },
       ];
     }
+
+    if (available === "AVAILABLE") {
+      where.slots = {
+        some: { status: "AVAILABLE" }
+      };
+    }
+
 
     if (expertise) {
       where.expertise = {
@@ -105,7 +114,7 @@ class ConsultantService {
 
     const consultant = await prisma.consultant.findUnique({
       where: { id },
-      include: { slots: true }
+      include: { slots: true, reviews: true }
     });
 
     if (!consultant) {
@@ -127,10 +136,13 @@ class ConsultantService {
       throw new AppError("Consultant not found", 404);
     }
 
-    const updated = await prisma.consultant.update({
-      where: { id },
-      data
-    });
+
+  const updated = await prisma.consultant.update({
+    where: { id },
+    data: {
+      ...data,
+    }
+  });
 
     await bumpVersion("consultants:version");
     await bumpVersion("consultant:version");
@@ -215,6 +227,29 @@ class ConsultantService {
       success: true,
       message: "Consultant permanently deleted"
     };
+  }
+
+
+  async updateConsultantRating(consultantId: string) {
+    const reviews = await prisma.review.findMany({
+      where: { consultantId },
+      select: { rating: true },
+    });
+
+    const count = reviews.length;
+
+    const avg =
+      count === 0
+        ? null
+        : reviews.reduce((sum: number, r: any) => sum + r.rating, 0) / count;
+
+    await prisma.consultant.update({
+      where: { id: consultantId },
+      data: {
+        rating: avg === null? null: Number(avg?.toFixed(2)),
+        reviewCount: count,
+      },
+    });
   }
 
 }

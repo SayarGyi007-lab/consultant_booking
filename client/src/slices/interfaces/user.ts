@@ -23,7 +23,8 @@ export interface QueryParams {
   sortBy?: string
   order?: "asc" | "desc",
   expertise?: string,
-  status?: string
+  status?: string,
+  available?: string
 }
 
 //response

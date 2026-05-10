@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
-import Button from "../ui/Button";
-import FormInput from "../ui/FormInput";
-import PasswordInput from "../ui/PasswordInput";
+import Button from "../ui/components/Button";
+import FormInput from "../ui/components/FormInput";
+import PasswordInput from "../ui/components/PasswordInput";
 import * as z from 'zod'
 import { registerSchema } from "../validation/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -34,7 +34,7 @@ const RegisterPage = () => {
     }
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 px-6">
+        <div className="min-h-screen flex items-center justify-center px-6">
 
             <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-lg">
 
@@ -104,7 +104,7 @@ const RegisterPage = () => {
 
                 <p className="text-center text-sm text-gray-600 mt-6">
                     Already have an account?{" "}
-                    <Link to="/login" className="font-semibold hover:underline">
+                    <Link to="/login" className="font-semibold text-[#24389c] hover:underline">
                         Login
                     </Link>
                 </p>

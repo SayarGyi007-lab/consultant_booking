@@ -5,6 +5,7 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 import { asyncHandler } from "../utils/async-handler";
 import generateTokens from "../utils/token";
 import { AppError } from "../utils/app-error";
+import { redis } from "../config/redis";
 
 
 export interface AuthRequest extends Request {
@@ -24,7 +25,7 @@ const protect = asyncHandler(
         // Read from Authorization header instead of cookies
         const authHeader = req.headers.authorization;
         const accessToken = authHeader?.startsWith("Bearer ") ? authHeader.split(" ")[1] : null;
-        
+
         // Read refresh token from request body or custom header
         const refreshToken = req.headers["x-refresh-token"] as string;
 
@@ -33,6 +34,12 @@ const protect = asyncHandler(
         }
 
         try {
+
+            const isBlacklisted = await redis.get(`bl:${accessToken}`);
+            if (isBlacklisted) {
+                throw new AppError("Token is blacklisted", 401);
+            }
+
             const decoded = jwt.verify(accessToken!, config.JWT_SECRET!) as JwtPayload;
 
             const user = await prisma.user.findUnique({
@@ -59,6 +66,11 @@ const protect = asyncHandler(
             }
 
             try {
+
+                const stored = await redis.get(`rt:${refreshToken}`);
+                if (!stored) {
+                    throw new AppError("Invalid refresh token", 401);
+                }
                 const decoded = jwt.verify(
                     refreshToken,
                     config.JWT_REFRESH_SECRET!

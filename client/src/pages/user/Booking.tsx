@@ -8,8 +8,8 @@ import { useConsultants } from '../../hooks/useConsultants'
 import { useTimeSlots } from '../../hooks/useTimeSlots'
 import { toast } from 'react-toastify'
 import { useNavigate, useLocation } from 'react-router-dom'
-import FormInput from '../../ui/FormInput'
-import Button from '../../ui/Button'
+import FormInput from '../../ui/components/FormInput'
+import Button from '../../ui/components/Button'
 import { dateOptions, timeOptions } from '../../utils/date-time'
 
 type formInputs = z.infer<typeof createBookingSchema>
@@ -76,7 +76,7 @@ const Booking = () => {
           <FormInput
             label="Customer Name"
             type="text"
-            placeholder="John Doe"
+            placeholder="Enter Your Name"
             {...register('customerName')}
           />
           {errors.customerName && <p className="text-red-400 text-sm">{errors.customerName.message}</p>}
@@ -84,7 +84,7 @@ const Booking = () => {
           <FormInput
             label="Customer Email"
             type="email"
-            placeholder="john@example.com"
+            placeholder="Enter Your Email"
             {...register('customerEmail')}
           />
           {errors.customerEmail && <p className="text-red-400 text-sm">{errors.customerEmail.message}</p>}
@@ -171,3 +171,4 @@ const Booking = () => {
 }
 
 export default Booking
+

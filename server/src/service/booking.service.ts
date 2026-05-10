@@ -1,5 +1,5 @@
-import { ICreateBookingInput } from "../interface/IBooking";
 import prisma from "../config/prisma.client";
+import { ICreateBookingInput } from "../interface/IBooking";
 import { QueryOptions } from "../utils/pagination";
 import { AppError } from "../utils/app-error";
 import { bumpVersion, getVersion } from "../utils/cache-version";
@@ -8,45 +8,63 @@ import { getCache, setCache } from "../utils/cache";
 class BookingService {
 
   async createBooking(data: ICreateBookingInput) {
-
-  const newBooking = await prisma.$transaction(async (tx: any) => {
+  const booking = await prisma.$transaction(async (tx: any) => {
 
     const slot = await tx.timeSlot.findUnique({
       where: { id: data.slotId }
     });
 
-    if (!slot) {
-      throw new AppError("Time slot not found", 404);
-    }
+    if (!slot) throw new AppError("Time slot not found", 404);
 
     const now = new Date();
+
     if (slot.startTime < now) {
       throw new AppError("Cannot book past time slots", 400);
     }
-    if (slot.startTime >= slot.endTime) {
-      throw new AppError("Invalid slot time range",400);
+
+    const existing = await tx.booking.findFirst({
+  where: { slotId: data.slotId }
+});
+
+    if (existing && existing.status !== "CANCELLED") {
+      throw new AppError("Slot already booked", 400);
     }
 
-    const updatedSlot = await tx.timeSlot.updateMany({
+    const updated = await tx.timeSlot.updateMany({
       where: {
         id: data.slotId,
         status: "AVAILABLE"
       },
-      data: {
-        status: "BOOKED"
-      }
+      data: { status: "BOOKED" }
     });
 
-    if (updatedSlot.count === 0) {
+    if (updated.count === 0) {
       throw new AppError("Slot already booked", 400);
     }
+
+    if (existing) {
+  return await tx.booking.update({
+    where: { id: existing.id },
+    data: {
+      userId: data.userId,
+      customerName: data.customerName,
+      customerEmail: data.customerEmail,
+      status: "CONFIRMED"
+    },
+    include: {
+      slot: true,
+      user: true
+    }
+  });
+}
 
     return await tx.booking.create({
       data: {
         slotId: data.slotId,
         userId: data.userId,
         customerName: data.customerName,
-        customerEmail: data.customerEmail
+        customerEmail: data.customerEmail,
+        status: "CONFIRMED"
       },
       include: {
         slot: true,
@@ -57,29 +75,36 @@ class BookingService {
 
   await bumpVersion("bookings:version");
   await bumpVersion("available-slot:version");
+  await bumpVersion("time-slots:version");
+  await bumpVersion("consultants:version");
+  await bumpVersion("consultant:version");
 
-  return newBooking;
+  return booking;
 }
-
 
   async getBookings(query: QueryOptions, userId?: string) {
 
-    const version = await getVersion("bookings:version")
-    const cacheKey = `bookings:v${version}:${userId || 'admin'}:${JSON.stringify(query)}`
+    const version = await getVersion("bookings:version");
+    const cacheKey = `bookings:v${version}:${userId || "admin"}:${JSON.stringify(query)}`;
 
-    const cached = await getCache(cacheKey)
-    if (cached) {
-    console.log("cache hit booking");
-    return cached;
-  }
+    const cached = await getCache(cacheKey);
+    if (cached) return cached;
 
-  console.log("cache miss booking");
+    const { search, skip, limit, order, sortBy, page, status } = query;
 
-    const { search, skip, limit, order, sortBy, page } = query;
-
-    const where = {
+    const where: any = {
       ...(userId ? { userId } : {})
-    } as any;
+    };
+
+    if (!status || status === 'CONFIRMED') {
+      where.status = 'CONFIRMED'
+    }
+    if (status === 'CANCELLED') {
+      where.status = 'CANCELLED'
+    }
+    if (status === 'COMPLETED') {
+      where.status = 'COMPLETED'
+    }
 
     if (search) {
       where.OR = [
@@ -92,27 +117,36 @@ class BookingService {
         {
           slot: {
             consultant: {
-              OR: [
-                {
-                  firstName: {
-                    contains: search,
-                    mode: "insensitive"
-                  }
-                }
-                // can add search later 
-              ]
+              firstName: {
+                contains: search,
+                mode: "insensitive"
+              }
             }
           }
         }
       ];
     }
 
-    const bookings = await prisma.booking.findMany({
+    // const queryOptions: any = {
+    //   where,
+    //   orderBy: { [sortBy]: order },
+    //   include: {
+    //     user: true,
+    //     slot: {
+    //       include: {
+    //         consultant: true
+    //       }
+    //     },
+    //     review: true
+    //   }
+    // };
+
+    const queryOptions: any = {
       where,
-      skip,
-      take: limit,
       orderBy: {
-        [sortBy]: order
+        slot: {
+          startTime: "asc"
+        }
       },
       include: {
         user: true,
@@ -120,11 +154,20 @@ class BookingService {
           include: {
             consultant: true
           }
-        }
+        },
+        review: true
       }
-    });
+    };
 
-    const total = await prisma.booking.count({ where });
+    if (limit !== 0) {
+      queryOptions.take = limit;
+      queryOptions.skip = skip;
+    }
+
+    const [bookings, total] = await Promise.all([
+      prisma.booking.findMany(queryOptions),
+      prisma.booking.count({ where })
+    ]);
 
     const result = {
       data: bookings,
@@ -132,62 +175,92 @@ class BookingService {
         page,
         limit,
         total,
-        totalPages: Math.ceil(total / limit)
+        totalPages: limit === 0 ? 1 : Math.ceil(total / limit)
       }
     };
+
     await setCache(cacheKey, result, 60);
 
-    return result
+    return result;
   }
 
+  async cancelBooking(id: string) {
+  const result = await prisma.$transaction(async (tx: any) => {
 
-  // async getBookingById(id: string, userId: string) {
+    const booking = await tx.booking.findUnique({
+      where: { id }
+    });
 
-  //   const booking = await prisma.booking.findFirst({
-  //     where: { id, userId: userId },
-  //     include: {
-  //       slot: true,
-  //       user: true
-  //     }
-  //   });
+    if (!booking) throw new AppError("Booking not found", 404);
 
-  //   if (!booking) {
-  //     throw new Error("Booking not found");
-  //   }
+    if (booking.status === "CANCELLED") {
+      throw new AppError("Booking already cancelled", 400);
+    }
 
-  //   return booking;
-  // }
+    if (booking.status === "COMPLETED") {
+      throw new AppError("Completed booking cannot be cancelled", 400);
+    }
 
+    const updatedBooking = await tx.booking.update({
+      where: { id },
+      data: { status: "CANCELLED" }
+    });
 
-  async deleteBooking(id: string) {
+    await tx.timeSlot.update({
+      where: { id: booking.slotId },
+      data: { status: "AVAILABLE" }
+    });
 
+    return updatedBooking;
+  });
+
+  await bumpVersion("bookings:version");
+  await bumpVersion("available-slot:version");
+  await bumpVersion("time-slots:version");
+  await bumpVersion("consultants:version");
+  await bumpVersion("consultant:version");
+
+  return result;
+}
+
+  async completeBooking(id: string) {
     const booking = await prisma.booking.findUnique({
       where: { id }
     });
 
-    if (!booking) {
-      throw new AppError("Booking not found", 404);
+    if (!booking) throw new AppError("Booking not found", 404);
+
+    if (booking.status !== "CONFIRMED") {
+      throw new AppError("Only confirmed bookings can be completed", 400);
     }
 
-    await prisma.$transaction(async (tx: any) => {
-
-      await tx.booking.delete({
-        where: { id }
-      });
-
-      await tx.timeSlot.update({
-        where: { id: booking.slotId },
-        data: {
-          status: "AVAILABLE"
-        }
-      });
-
-    });
-
-    await bumpVersion("available-slot:version");
     await bumpVersion("bookings:version");
-    return { message: "Booking cancelled successfully" };
+
+    return await prisma.booking.update({
+      where: { id },
+      data: { status: "COMPLETED" }
+    });
   }
+
+  async autoCompleteBookings() {
+  const now = new Date();
+
+  const result = await prisma.booking.updateMany({
+    where: {
+      status: "CONFIRMED",
+      slot: {
+        endTime: { lte: now }
+      }
+    },
+    data: { status: "COMPLETED" }
+  });
+
+  if (result.count > 0) {
+    await bumpVersion("bookings:version");
+  }
+
+  return result.count;
+}
 }
 
 export default new BookingService();

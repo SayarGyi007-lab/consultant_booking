@@ -1,0 +1,19 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;0,9..144,700;1,9..144,400&family=DM+Sans:wght@300;400;500&display=swap');
+
+:root {
+  /* Core Backgrounds */
+  --bg:       #0d0f14;
+  --surface:  #13161e;
+  --surface2: #1a1e29;
+
+  /* Borders */
+  --border:   rgba(255, 255, 255, 0.07);
+
+  /* Brand / Accent */
+  --accent:   #e8c97e;
+  --accent2:  #c47f5b;
+
+  /* Text */
+  --text:     #f0ede8;
+  --muted:    #7a7e8a;
+}

@@ -60,7 +60,6 @@ export const userApiSlice = apiSlice.injectEndpoints({
             providesTags: ["Users"]
         }),
 
-        // UPDATE USER
         updateUser: builder.mutation({
             query: ({ id, ...data }: { id: string } & updateUserInputs) => ({
                 url: `users/${id}`,
@@ -73,7 +72,6 @@ export const userApiSlice = apiSlice.injectEndpoints({
             ]
         }),
 
-        // CHANGE PASSWORD
         changePassword: builder.mutation({
             query: (data: { currentPassword: string; newPassword: string }) => ({
                 url: "users/change-password",
@@ -84,7 +82,6 @@ export const userApiSlice = apiSlice.injectEndpoints({
 
 
         //Admin
-        //GET USERS
         getUsers: builder.query<UsersResponse, QueryParams | void>({
             query: (params) => ({
                 url: "users",
@@ -94,7 +91,6 @@ export const userApiSlice = apiSlice.injectEndpoints({
             providesTags: ["Users"]
         }),
 
-        //GET USER BY ID
         getUserById: builder.query({
             query: (id: string) => ({
                 url: `users/${id}`,
@@ -105,7 +101,6 @@ export const userApiSlice = apiSlice.injectEndpoints({
             ]
         }),
 
-        // DELETE USER
         archiveUser: builder.mutation({
             query: (id: string) => ({
                 url: `users/${id}/archive`,

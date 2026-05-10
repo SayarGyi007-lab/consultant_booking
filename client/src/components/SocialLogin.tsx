@@ -1,4 +1,3 @@
-// components/GoogleButton.tsx
 import { GoogleLogin } from "@react-oauth/google";
 import { useGoogleLoginMutation } from "../slices/redux-slices/user-api";
 import { useDispatch } from "react-redux";

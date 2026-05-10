@@ -3,9 +3,21 @@ export interface IConsultant {
   lastName: string;
   email: string;
   phone: string;
-  expertise: string
+  expertise: string;
+  bio: string;
+  price: number;
+  skills: string[];
+  experience: number;
 }
 
-export type IUpdateConsultant = Partial<Omit<IConsultant, "password">> & {
-  password?: string;
-};
+export interface IUpdateConsultant {
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  phone?: string;
+  expertise?: string;
+  bio?: string;
+  price?: number;
+  skills?: string[];
+  experience?: number;
+}

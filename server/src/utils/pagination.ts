@@ -9,7 +9,8 @@ export interface QueryOptions {
     sortBy: string;
     order: "asc" | "desc";
     expertise?: string;
-    status?: string
+    status?: string;
+    available?: string;
 }
 
 export const buildQuery = (req: Request): QueryOptions => {
@@ -53,6 +54,10 @@ export const buildQuery = (req: Request): QueryOptions => {
 
     if (req.query.status) {
         query.status = req.query.status as string;
+    }
+
+    if (req.query.available) {
+        query.available = req.query.available as string;
     }
 
     return query;

@@ -5,5 +5,5 @@ export const roleEnum = z.enum(
 );
 
 export const slotStatusEnum = z.enum(
-  ["AVAILABLE", "BOOKED"],
+  ["AVAILABLE", "BOOKED", "EXPIRED"],
 )

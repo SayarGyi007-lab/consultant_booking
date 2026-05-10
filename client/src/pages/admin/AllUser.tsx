@@ -3,8 +3,8 @@ import useDebounce from "../../hooks/useDebounce";
 import { useUsers } from "../../hooks/useUsers";
 import Alert from "../../ui/Alert";
 import StatusToggle from "../../ui/Toggle";
-import UserTable from "../../components/admin/UserTable";
-import Button from "../../ui/Button";
+import UserTable from "../../components/admin/UserGrid";
+import Button from "../../ui/components/Button";
 import {
   useArchiveUserMutation,
   useRestoreUserMutation,
@@ -79,7 +79,7 @@ const AllUser = () => {
         <h1 className="text-2xl font-semibold">Users</h1>
         <input
           type="text"
-          placeholder="Search by name, email..."
+          placeholder="Search by name..."
           value={search}
           onChange={(e) => { setSearch(e.target.value); setPage(1); }}
           className="border w-full sm:w-[300px] rounded-lg px-4 py-2"
@@ -92,7 +92,12 @@ const AllUser = () => {
       <div className="mb-4">
         <StatusToggle
           value={status}
-          onChange={(val) => { setStatus(val); setPage(1); }}
+          options={["active", "archived"]}
+          onChange={setStatus}
+          labels={{
+            active: "Active",
+            archived: "Archived",
+          }}
         />
       </div>
 

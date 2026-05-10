@@ -114,16 +114,23 @@ class AuthService {
 
         const expiresIn = Math.max(
             decoded.exp - Math.floor(Date.now() / 1000),
-            0
+            60
         );
 
         // blacklist access token
+
+        console.log("LOGOUT START");
+
+        console.log("ACCESS TOKEN RECEIVED:", accessToken);
+
         await redis.set(
             `bl:${accessToken}`,
             "true",
             "EX",
             expiresIn
         );
+        console.log("BLACKLIST REAL TOKEN WRITTEN:", `bl:${accessToken}`);
+        
 
         // delete refresh token (logout session)
         await redis.del(`rt:${refreshToken}`);
@@ -212,7 +219,7 @@ class AuthService {
             "EX",
             7 * 24 * 60 * 60
         );
-
+        
         return {
             accessToken,
             refreshToken,

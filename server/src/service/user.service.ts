@@ -12,7 +12,7 @@ class UserService {
     // Get all users (Admin)
     async getUsers(query: QueryOptions) {
 
-        const version = await getVersion("users:version")
+        const version:any = await getVersion("users:version")
 
         const cacheKey = `users:v${version}:${JSON.stringify(query)}`
 

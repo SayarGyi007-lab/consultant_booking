@@ -10,18 +10,14 @@ export class TimeSlotService {
 
   async createTimeSlot(data: ICreateTimeSlotInput) {
 
-    const start = new Date(data.startTime);
-    const end = new Date(data.endTime);
-    const now = new Date();
+   const start = new Date(data.startTime);
+  const end = new Date(start.getTime() + 60 * 60 * 1000); // ✅ always +1 hour
+  const now = new Date();
 
-    if (start<= now) {
+  if (start <= now) {
     throw new AppError("Cannot create a time slot in the past", 400);
-}
+  }
 
-
-    if (start >= end) {
-      throw new AppError("End time must be after start time", 400);
-    }
 
     // Check for overlapping slots
     const conflict = await prisma.timeSlot.findFirst({
@@ -47,6 +43,7 @@ export class TimeSlotService {
 
     await bumpVersion("time-slots:version")
     await bumpVersion("available-slot:version")
+    await bumpVersion("consultant:version")
 
     return slot;
   }
@@ -66,10 +63,23 @@ export class TimeSlotService {
     console.log("cache miss time slot");
 
 
-    const { skip, limit, search, sortBy, order, expertise } = query;
+    const { skip, limit, search, sortBy, order, expertise, status } = query;
 
     const where = {} as any;
     const consultantFilter = {} as any;
+
+
+    if (status === "AVAILABLE") {
+      where.status = "AVAILABLE";
+    }
+
+    if (status === "BOOKED") {
+      where.status = "BOOKED";
+    }
+
+    if (status === "EXPIRED") {
+      where.status = "EXPIRED";
+    }
 
     if (search) {
       consultantFilter.OR = [
@@ -199,14 +209,17 @@ export class TimeSlotService {
     const slot = await prisma.timeSlot.update({
       where: { id },
       data: {
-        ...(data.startTime && { startTime: new Date(data.startTime) }),
-        ...(data.endTime && { endTime: new Date(data.endTime) }),
-        ...(data.status && { status: data.status })
-      }
+      ...(data.startTime && {
+        startTime: new Date(data.startTime),
+        endTime: new Date(new Date(data.startTime).getTime() + 60 * 60 * 1000) 
+      }),
+      ...(data.status && { status: data.status })
+    }
     });
 
     await bumpVersion("time-slots:version")
     await bumpVersion("available-slot:version")
+    await bumpVersion("consultant:version")
 
     return slot;
   }
@@ -230,8 +243,11 @@ export class TimeSlotService {
       where: { id }
     });
 
+    await bumpVersion("bookings:version");
+    await bumpVersion("available-slot:version");
     await bumpVersion("time-slots:version")
-    await bumpVersion("available-slot:version")
+    await bumpVersion("consultants:version");
+    await bumpVersion("consultant:version");
     return { message: "TimeSlot deleted successfully" };
   }
 

@@ -1,18 +1,20 @@
-import { useEffect, useState, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import useDebounce from "../../hooks/useDebounce";
 import { useTimeSlots } from "../../hooks/useTimeSlots";
+import Button from "../../ui/components/Button";
 import Alert from "../../ui/Alert";
-import Button from "../../ui/Button";
-import { useDeleteTimeSlotMutation } from "../../slices/redux-slices/time-slot-api";
+import StatusToggle from "../../ui/Toggle";
 import UpdateTimeSlot from "../../components/admin/UpdateTimeSlot";
 import { TimeSlotsTable } from "../../constant/lazyload";
+import { useDeleteTimeSlotMutation } from "../../slices/redux-slices/time-slot-api";
 
 const AllTimeSlots = () => {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
+  const [status, setStatus] = useState<"AVAILABLE" | "BOOKED" | "EXPIRED">("AVAILABLE");
   const [errorMsg, setErrorMsg] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
-  const [expertise, setExpertise] = useState<string>("");
+  const [expertise, setExpertise] = useState("");
   const [editingSlotId, setEditingSlotId] = useState<string | null>(null);
 
   const limit = 10;
@@ -22,15 +24,28 @@ const AllTimeSlots = () => {
     page,
     limit,
     search: debounceSearch,
-    expertise: expertise || undefined,
+    expertise,
+    status,
   });
 
   const { timeSlots: allTimeSlots = [] } = useTimeSlots({
     page: 1,
     limit: 0,
+    status,
   });
 
-  const [deleteTimeSlot, { isLoading }] = useDeleteTimeSlotMutation();
+  const uniqueExpertise = useMemo(() => {
+    return Array.from(
+      new Set(
+        allTimeSlots
+          .map((slot) => slot.consultant?.expertise)
+          .filter(Boolean)
+      )
+    );
+  }, [allTimeSlots]);
+
+  const [deleteTimeSlot, { isLoading: isDeleting }] =
+    useDeleteTimeSlotMutation();
 
   useEffect(() => {
     if (errorMsg || successMsg) {
@@ -42,11 +57,12 @@ const AllTimeSlots = () => {
     }
   }, [errorMsg, successMsg]);
 
-  const handleDelete = async (id: string, status: "AVAILABLE" | "BOOKED") => {
+  const handleDelete = async (id: string, status: "AVAILABLE" | "BOOKED" | "EXPIRED") => {
     if (status === "BOOKED") {
       setErrorMsg("Cannot delete a booked time slot");
       return;
     }
+
     try {
       const res = await deleteTimeSlot(id).unwrap();
       setSuccessMsg(res.message);
@@ -55,83 +71,125 @@ const AllTimeSlots = () => {
     }
   };
 
-  const uniqueExpertise = useMemo(() => {
-    return Array.from(
-      new Set(allTimeSlots.map((slot) => slot.consultant?.expertise).filter(Boolean))
-    );
-  }, [allTimeSlots]);
-
   const hasNextPage = page < (timeslotsPagination?.totalPages ?? 1);
   const hasPreviousPage = page > 1;
+
   const slotToEdit = timeSlots.find((s) => s.id === editingSlotId);
 
   return (
-    <div className="p-6 min-h-screen w-full">
+    <div className="p-4 lg:p-6 min-h-screen w-full overflow-x-hidden">
 
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+      {/* Page Header */}
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
         <h1 className="text-2xl font-semibold">Time Slots</h1>
+
         <input
           type="text"
           placeholder="Search by consultant..."
           value={search}
-          onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            setPage(1);
+          }}
           className="border w-full sm:w-[300px] rounded-lg px-4 py-2"
         />
       </div>
 
       {/* Alerts */}
       <Alert type="error" message={errorMsg} onClose={() => setErrorMsg("")} />
-      <Alert type="success" message={successMsg} onClose={() => setSuccessMsg("")} />
+      <Alert
+        type="success"
+        message={successMsg}
+        onClose={() => setSuccessMsg("")}
+      />
 
-      {/* Filter + Reset */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-2">
-        <select
-          disabled={!uniqueExpertise.length}
-          value={expertise}
-          onChange={(e) => { setExpertise(e.target.value); setPage(1); }}
-          className="border rounded px-3 py-2"
-        >
-          <option value="">All Expertise</option>
-          {uniqueExpertise.map((exp) => (
-            <option key={exp} value={exp}>{exp}</option>
-          ))}
-        </select>
+      {/* Filters */}
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 gap-4">
+        <StatusToggle
+          value={status}
+          options={["AVAILABLE", "BOOKED", "EXPIRED"]}
+          onChange={(val) => {
+            setStatus(val);
+            setPage(1);
+          }}
+          labels={{
+            AVAILABLE: "Available",
+            BOOKED: "Booked",
+            EXPIRED: "Expired"
+          }}
+        />
 
-        <Button
-          variant="outline"
-          onClick={() => { setSearch(""); setExpertise(""); setPage(1); }}
-        >
-          Reset
-        </Button>
+        <div className="flex gap-2">
+          <select
+            disabled={!uniqueExpertise.length}
+            value={expertise}
+            onChange={(e) => {
+              setExpertise(e.target.value);
+              setPage(1);
+            }}
+            className="border rounded px-3 py-2"
+          >
+            <option value="">All Expertise</option>
+            {uniqueExpertise.map((exp) => (
+              <option key={exp} value={exp}>
+                {exp}
+              </option>
+            ))}
+          </select>
+
+          <Button
+            variant="outline"
+            onClick={() => {
+              setSearch("");
+              setExpertise("");
+              setPage(1);
+            }}
+          >
+            Reset
+          </Button>
+        </div>
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto w-full">
+      {timeSlots.length === 0 ? (
+        <div className="text-center py-12 text-gray-500">
+          No time slots found
+        </div>
+      ) : (
         <TimeSlotsTable
           timeSlots={timeSlots}
           onDelete={handleDelete}
-          isDeleting={isLoading}
+          isDeleting={isDeleting}
           onUpdate={(id) => setEditingSlotId(id)}
           page={page}
           limit={limit}
         />
-      </div>
+      )}
 
       {/* Pagination */}
-      <div className="flex flex-col sm:flex-row justify-between items-center mt-6 gap-2">
+      <div className="grid grid-cols-3 items-center mt-6">
         <div>
-          {hasPreviousPage && <Button onClick={() => setPage(p => p - 1)}>Previous</Button>}
+          {hasPreviousPage && (
+            <Button onClick={() => setPage((p) => p - 1)}>
+              Previous
+            </Button>
+          )}
         </div>
-        <div className="text-center">
+
+        <div className="text-center text-sm">
           Page {page} / {timeslotsPagination?.totalPages ?? 1}
         </div>
-        <div>
-          {hasNextPage && <Button onClick={() => setPage(p => p + 1)}>Next</Button>}
+
+        <div className="flex justify-end">
+          {hasNextPage && (
+            <Button onClick={() => setPage((p) => p + 1)}>
+              Next
+            </Button>
+          )}
         </div>
       </div>
 
-      {/* Update Modal */}
+      {/* Edit Modal */}
       {slotToEdit && (
         <UpdateTimeSlot
           slot={slotToEdit}

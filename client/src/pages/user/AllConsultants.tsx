@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import { useConsultants } from "../../hooks/useConsultants";
 import ConsultantCard from "../../components/user/ConsultantCard";
-import Button from "../../ui/Button";
+import Button from "../../ui/components/Button";
 import useDebounce from "../../hooks/useDebounce";
 import { useNavigate } from "react-router-dom";
 

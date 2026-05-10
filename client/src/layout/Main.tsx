@@ -1,10 +1,12 @@
 import { Bounce, ToastContainer } from 'react-toastify';
 import { Outlet } from 'react-router-dom';
 import { Header } from '../constant/lazyload';
+import ChatWidget from '../ui/components/chat/ChatWidget';
 
 function Main() {
   return (
-    <section className="min-h-screen flex flex-col">
+    <section className="min-h-screen flex flex-col relative bg-[#f4faff]">
+      
       <ToastContainer
         position="top-center"
         autoClose={5000}
@@ -18,10 +20,15 @@ function Main() {
         theme="light"
         transition={Bounce}
       />
+
       <Header />
+
       <div className="flex-1">
         <Outlet />
       </div>
+
+      <ChatWidget />
+
     </section>
   );
 }

@@ -5,8 +5,8 @@ import { useForm, type SubmitHandler } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
-import Button from '../../ui/Button'
-import FormInput from '../../ui/FormInput'
+import Button from '../../ui/components/Button'
+import FormInput from '../../ui/components/FormInput'
 import { useConsultants } from '../../hooks/useConsultants'
 
 type formInputs = z.infer<typeof createTimeSlotFormSchema>
@@ -44,7 +44,7 @@ const AddTimeslot = () => {
             const payloadWithISO = {
                 ...payload,
                 startTime: new Date(payload.startTime).toISOString(),
-                endTime: new Date(payload.endTime).toISOString(),
+                // endTime: new Date(payload.endTime).toISOString(),
             }
 
             await timeSlot(payloadWithISO).unwrap()
@@ -102,14 +102,14 @@ const AddTimeslot = () => {
                         <span className="text-red-400 text-sm font-medium">{errors.startTime.message}</span>
                     )}
 
-                    <FormInput
+                    {/* <FormInput
                         label="End Time"
                         type="datetime-local"
                         {...register('endTime')}
                     />
                     {errors.endTime && (
                         <span className="text-red-400 text-sm font-medium">{errors.endTime.message}</span>
-                    )}
+                    )} */}
 
                     <div className='flex gap-4'>
                         <Button className="w-full justify-center" variant='outline' onClick={backHandler}>

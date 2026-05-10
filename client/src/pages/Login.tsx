@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
-import Button from '../ui/Button'
-import FormInput from "../ui/FormInput";
-import PasswordInput from "../ui/PasswordInput";
+import Button from '../ui/components/Button'
+import FormInput from "../ui/components/FormInput";
+import PasswordInput from "../ui/components/PasswordInput";
 import { useDispatch, useSelector } from "react-redux";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { loginSchema } from "../validation/auth";
@@ -55,7 +55,7 @@ const LoginPage = () => {
     }, [navigate, userInfo])
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 px-6">
+        <div className="min-h-screen flex items-center justify-center px-6">
 
             <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-lg">
 
@@ -100,7 +100,7 @@ const LoginPage = () => {
 
                 <p className="text-center text-sm text-gray-600 mt-6">
                     Don't have an account?{" "}
-                    <Link to="/register" className="font-semibold hover:underline">
+                    <Link to="/register" className="text-[#24389c] font-semibold hover:underline">
                         Register
                     </Link>
                 </p>

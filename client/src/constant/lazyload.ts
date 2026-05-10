@@ -92,21 +92,21 @@ export const ProfileBooking = PageLoader(
     lazy(()=> import ('../components/user/ProfileBooking'))
 )
 
-export const UpcomingBookings = PageLoader(
-    lazy(()=> import ('../components/user/UpcomingBooking'))
-)
+// export const UpcomingBookings = PageLoader(
+//     lazy(()=> import ('../components/user/UpcomingBooking'))
+// )
 
 //components admin
 export const RecentBookingsTable = PageLoader(
-    lazy(()=> import ('../components/admin/BookingTable'))
+    lazy(()=> import ('../components/admin/BookingGrid'))
 )
 
 export const ConsultantTable = PageLoader(
-    lazy(()=> import ('../components/admin/ConsultantTable'))
+    lazy(()=> import ('../components/admin/ConsultantGrid'))
 )
 
 export const TimeSlotsTable = PageLoader(
-    lazy(()=> import ('../components/admin/TimeSlotTable'))
+    lazy(()=> import ('../components/admin/TimeSlotGrid'))
 )
 
 export const UpdateConsultant = PageLoader(
@@ -118,5 +118,9 @@ export const UpdateTimeSlot = PageLoader(
 )
 
 export const UserTable = PageLoader(
-    lazy(()=> import ('../components/admin/UserTable'))
+    lazy(()=> import ('../components/admin/UserGrid'))
+)
+
+export const Reviews = PageLoader(
+    lazy(()=> import ('../pages/user/Review'))
 )

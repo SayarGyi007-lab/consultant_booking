@@ -1,63 +1,121 @@
-import { Request, Response } from "express";
-import { asyncHandler } from "../utils/async-handler";
-import bookingService from "../service/booking.service";
-import { buildQuery } from "../utils/pagination";
-import { AuthRequest } from "../middlewares/authentication";
+// import { Request, Response } from "express";
+// import { asyncHandler } from "../utils/async-handler";
+// import bookingService from "../service/booking.service";
+// import { buildQuery } from "../utils/pagination";
+// import { AuthRequest } from "../middlewares/authentication";
 
 
-export const createBooking = asyncHandler( async (req: AuthRequest
-  , res: Response) => {
+// export const createBooking = asyncHandler( async (req: AuthRequest
+//   , res: Response) => {
 
-    const booking = await bookingService.createBooking({...req.body, userId: req.user!.id});
+//     const booking = await bookingService.createBooking({...req.body, userId: req.user!.id});
 
-    res.status(201).json({
-      message: "Booking created successfully",
-      data: booking
-    });
-  }
-);
-
-
-export const getMyBookings = asyncHandler( async (req: AuthRequest, res: Response) => {
-
-    const query = buildQuery(req);
-
-    const bookings = await bookingService.getBookings(query, req.user!.id);
-
-    res.json({success: true, ...bookings});
-  }
-);
-
-export const getAllBookings = asyncHandler( async (req: AuthRequest, res: Response) => {
-
-    const query = buildQuery(req);
-
-    const bookings = await bookingService.getBookings(query);
-
-    res.json({success: true, ...bookings});
-  }
-);
-
-
-// export const getBookingById = asyncHandler( async (req: AuthRequest, res: Response) => {
-
-//     const { id } = req.params as {id:string};
-
-//     const booking = await bookingService.getBookingById(id,req.user!.id);
-
-//     res.json({ success: true,
+//     res.status(201).json({
+//       message: "Booking created successfully",
 //       data: booking
 //     });
 //   }
 // );
 
 
-export const deleteBooking = asyncHandler( async (req: Request, res: Response) => {
+// export const getMyBookings = asyncHandler( async (req: AuthRequest, res: Response) => {
 
-    const { id } = req.params as {id: string};
+//     const query = buildQuery(req);
 
-    const result = await bookingService.deleteBooking(id);
+//     const bookings = await bookingService.getBookings(query, req.user!.id);
 
-    res.json(result);
-  }
-);
+//     res.json({success: true, ...bookings});
+//   }
+// );
+
+// export const getAllBookings = asyncHandler( async (req: AuthRequest, res: Response) => {
+
+//     const query = buildQuery(req);
+
+//     const bookings = await bookingService.getBookings(query);
+
+//     res.json({success: true, ...bookings});
+//   }
+// );
+
+
+// // export const getBookingById = asyncHandler( async (req: AuthRequest, res: Response) => {
+
+// //     const { id } = req.params as {id:string};
+
+// //     const booking = await bookingService.getBookingById(id,req.user!.id);
+
+// //     res.json({ success: true,
+// //       data: booking
+// //     });
+// //   }
+// // );
+
+
+// export const deleteBooking = asyncHandler( async (req: Request, res: Response) => {
+
+//     const { id } = req.params as {id: string};
+
+//     const result = await bookingService.deleteBooking(id);
+
+//     res.json(result);
+//   }
+// );
+
+import { Response } from "express";
+import { asyncHandler } from "../utils/async-handler";
+import bookingService from "../service/booking.service";
+import { buildQuery } from "../utils/pagination";
+import { AuthRequest } from "../middlewares/authentication";
+
+export const createBooking = asyncHandler(async (req: AuthRequest, res: Response) => {
+
+  const booking = await bookingService.createBooking({
+    ...req.body,
+    userId: req.user!.id
+  });
+
+  res.status(201).json({
+    success: true,
+    data: booking
+  });
+});
+
+export const getMyBookings = asyncHandler(async (req: AuthRequest, res: Response) => {
+
+  const query = buildQuery(req);
+
+  const bookings = await bookingService.getBookings(query, req.user!.id);
+
+  res.json({ success: true, ...bookings });
+});
+
+export const getAllBookings = asyncHandler(async (req: AuthRequest, res: Response) => {
+
+  const query = buildQuery(req);
+
+  const bookings = await bookingService.getBookings(query);
+
+  res.json({ success: true, ...bookings });
+});
+
+export const cancelBooking = asyncHandler(async (req: AuthRequest, res: Response) => {
+
+  const { id } = req.params as {id: string};
+
+  const result = await bookingService.cancelBooking(id);
+
+  res.json(result);
+});
+
+export const completeBooking = asyncHandler(async (req: AuthRequest, res: Response) => {
+
+  const { id } = req.params as {id: string};
+
+  const result = await bookingService.completeBooking(id);
+
+  res.json({
+    success: true,
+    data: result
+  });
+});

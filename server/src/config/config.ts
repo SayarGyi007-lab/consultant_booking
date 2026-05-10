@@ -32,6 +32,12 @@ class Config {
 
     public GOOGLE_CLIENT_ID: string;
 
+    public CLOUDINARY_NAME: string;
+    public CLOUDINARY_API_KEY: string
+    public CLOUDINARY_API_SECRET: string
+
+    public OPENROUTER_API_KEY: string
+
     // public REDIS_PRODUCTION: string;
     // public REDIS_TOKEN: string
 
@@ -45,11 +51,17 @@ class Config {
       throw new Error("DATABASE_URL_PRODUCTION is not defined");
     }
 
+    this.OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY || ''
+
     // this.REDIS_PRODUCTION = process.env.REDIS_PRODUCTION || ""
     // // this.REDIS_TOKEN = process.env.REDIS_TOKEN || ""
 
     this.REDIS_HOST = process.env.REDIS_HOST || "localhost";
     this.REDIS_PORT = Number(process.env.REDIS_PORT) || 6379;
+
+    this.CLOUDINARY_NAME = process.env.CLOUDINARY_NAME || ''
+    this.CLOUDINARY_API_KEY = process.env.CLOUDINARY_API_KEY || ''
+    this.CLOUDINARY_API_SECRET = process.env.CLOUDINARY_API_SECRET || ''
 
     this.REDIS_URI = process.env.REDIS_URI || ""
 

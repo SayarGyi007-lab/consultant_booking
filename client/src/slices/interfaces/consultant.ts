@@ -6,6 +6,10 @@ export interface CreateConsultantInputs {
   email: string
   phone: string
   expertise: string
+  price: number
+  bio: string
+  skills: string[]
+  experience: number
 }
 
 export interface UpdateConsultantInputs {
@@ -14,6 +18,10 @@ export interface UpdateConsultantInputs {
   email?: string
   phone?: string
   expertise?: string
+  price?: number
+  bio?: string
+  skills?: string[]
+  experience?: number
 }
 
 export interface Consultant {
@@ -23,8 +31,17 @@ export interface Consultant {
   email: string
   phone: string
   expertise: string
+  price: number
+  bio: string
+  skills: string[]
+  experience: number
+
+  rating: number | null
+  reviewCount: number | null
+
   createdAt: string
   updatedAt: string
+  deletedAt?: string | null
 }
 
 export interface ConsultantResponse{

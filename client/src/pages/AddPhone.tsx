@@ -2,8 +2,8 @@ import { useState } from "react";
 import { useUpdatePhoneMutation } from "../slices/redux-slices/user-api";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import Button from "../ui/Button";
-import FormInput from "../ui/FormInput";
+import Button from "../ui/components/Button";
+import FormInput from "../ui/components/FormInput";
 
 const AddPhonePage = () => {
   const [phone, setPhone] = useState("");

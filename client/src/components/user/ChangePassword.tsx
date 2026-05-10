@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { useChangePasswordMutation } from "../../slices/redux-slices/user-api";
-import Button from "../../ui/Button";
-import PasswordInput from "../../ui/PasswordInput";
+import Button from "../../ui/components/Button";
+import PasswordInput from "../../ui/components/PasswordInput";
 
 interface Props {
   onClose: () => void;

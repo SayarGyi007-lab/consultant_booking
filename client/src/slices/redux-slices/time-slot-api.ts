@@ -6,7 +6,6 @@ import type { QueryParams } from "../interfaces/user";
 export const timeSlotApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
 
-    // CREATE TIMESLOT ADMIN
     createTimeSlot: builder.mutation({
       query: (data: CreateTimeSlotInputs) => ({
         url: "time-slots",
@@ -16,14 +15,13 @@ export const timeSlotApiSlice = apiSlice.injectEndpoints({
       invalidatesTags: ["TimeSlots"]
     }),
 
-    // GET ALL TIMESLOTS
     getTimeSlots: builder.query<TimeSlotsResponse, QueryParams | void>({
       query: (params) => ({
         url: "time-slots",
         method: "GET",
         params: params ?? undefined
       }),
-      providesTags: ["TimeSlots"]
+      providesTags: ["TimeSlots","Consultants",'Bookings']
     }),
 
     // // GET TIMESLOT BY ID
@@ -46,16 +44,14 @@ export const timeSlotApiSlice = apiSlice.injectEndpoints({
     //   providesTags: ["TimeSlots"]
     // }),
 
-    // GET AVAILABLE CONSULTANT SLOTS
     getAvailableSlotsByConsultant: builder.query<{data: TimeSlot[]},string>({
       query: (consultantId: string) => ({
         url: `time-slots/consultant/${consultantId}/available`,
         method: "GET"
       }),
-      providesTags: ["TimeSlots"]
+      providesTags: ["TimeSlots", "Consultants",'Bookings']
     }),
 
-    // UPDATE TIMESLOT
     updateTimeSlot: builder.mutation({
       query: ({ id, ...data }: { id: string } & UpdateTimeSlotInputs) => ({
         url: `time-slots/${id}`,
@@ -64,17 +60,16 @@ export const timeSlotApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: (_result, _error, { id }) => [
         { type: "TimeSlots", id },
-        "TimeSlots"
+        "TimeSlots",'Consultants'
       ]
     }),
 
-    // DELETE TIMESLOT
     deleteTimeSlot: builder.mutation({
       query: (id: string) => ({
         url: `time-slots/${id}`,
         method: "DELETE"
       }),
-      invalidatesTags: ["TimeSlots"]
+      invalidatesTags: ["TimeSlots","Consultants"]
     })
 
   })

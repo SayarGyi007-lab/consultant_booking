@@ -1,8 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import AnimatedCard from "../ui/AnimateCard";
-import Button from "../ui/Button";
-import FormInput from "../ui/FormInput";
+import Button from "../ui/components/Button";
 import { useCurrentUser } from "../hooks/useUsers";
 import { useMyBookings } from "../hooks/useBookings";
 import { useUpdateUserMutation } from "../slices/redux-slices/user-api";
@@ -90,95 +88,111 @@ const Profile = () => {
   };
 
   return (
-    <div className="flex flex-col items-center min-h-screen px-4 py-12 bg-gray-50">
+    <div className="min-h-screen px-4 py-12 ">
 
-      <h1 className="text-3xl font-bold text-gray-800 mb-8">
-        {isAdmin ? "Admin Profile" : "Profile"}
-      </h1>
+      {/* Title */}
+      <div className="max-w-4xl mx-auto mb-8">
+        <p className="text-indigo-600 text-sm font-semibold uppercase tracking-wider">
+          Account Settings
+        </p>
+        <h1 className="text-4xl font-extrabold text-[#111d23]">
+          {isAdmin ? "Admin Profile" : "Profile"}
+        </h1>
+      </div>
 
-      <AnimatedCard className="w-full max-w-3xl bg-white p-8 rounded-3xl shadow-lg border border-gray-100">
-        {/* Avatar */}
-        <div className="flex justify-between items-center mb-8">
+      {/* Card */}
+      <div className="max-w-4xl mx-auto bg-white backdrop-blur-xl rounded-2xl shadow-[0_32px_64px_rgba(76,97,108,0.06)] overflow-hidden">
+
+        <div className="p-10 flex flex-col md:flex-row justify-between items-center gap-6 bg-[#e9f6fd]/30">
+
+          {/* Avatar + Info */}
           <div className="flex items-center gap-6">
-            <div className="w-28 h-28 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center text-4xl font-bold">
-              {user.firstName[0]}
-              {user.lastName[0]}
+            <div className="w-24 h-24 rounded-xl bg-gradient-to-br from-indigo-700 to-indigo-500 flex items-center justify-center text-white text-3xl font-bold shadow-lg">
+              {user.firstName[0]}{user.lastName[0]}
             </div>
+
             <div>
-              <h2 className="text-2xl font-bold text-gray-800">
+              <h2 className="text-2xl font-bold text-[#111d23]">
                 {user.firstName} {user.lastName}
               </h2>
+              <p className="text-gray-500 text-sm">{user.email}</p>
             </div>
           </div>
 
-          <div className="flex gap-4">
+          {/* Actions */}
+          <div className="flex gap-3">
             <Button
-              variant="uncommon"
-              className="border"
+              variant="outline"
               onClick={() => setShowPasswordCard(true)}
+              className="px-5 py-2 rounded-lg border text-sm font-semibold hover:bg-gray-100 transition"
             >
               Change Password
             </Button>
 
-            {showPasswordCard && (
-              <ChangePasswordCard onClose={() => setShowPasswordCard(false)} />
-            )}
-
             <Button
-              className={`px-6 py-2 rounded-xl font-medium ${
-                editMode
-                  ? "bg-green-600 hover:bg-green-700 text-white"
-                  : "bg-indigo-600 hover:bg-indigo-700 text-white"
-              }`}
               onClick={handleEditSave}
+              variant='primary'
+              className={`px-5 py-2 rounded-lg text-white text-sm font-semibold transition ${editMode
+                  ? "bg-green-600 hover:bg-green-700"
+                  : ""
+                }`}
             >
               {editMode ? "Save Profile" : "Edit Profile"}
             </Button>
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-6 mb-10">
+        <div className="p-10 border-t grid grid-cols-1 md:grid-cols-2 gap-8">
+
           {["firstName", "lastName", "email", "phone"].map((field) => (
-            <FormInput
-              key={field}
-              label={
-                field === "firstName"
+            <div key={field}>
+              <label className="text-sm font-semibold text-gray-500 mb-1 block">
+                {field === "firstName"
                   ? "First Name"
                   : field === "lastName"
-                  ? "Last Name"
-                  : field.charAt(0).toUpperCase() + field.slice(1)
-              }
-              name={field}
-              type={field === "email" ? "email" : "text"}
-              value={(form as any)[field]}
-              readOnly={!editMode}
-              onChange={handleChange}
-              className={
-                editMode
-                  ? "bg-white border-green-500 focus:ring-2 focus:ring-green-200"
-                  : "bg-gray-100 border-gray-200 cursor-not-allowed"
-              }
-            />
+                    ? "Last Name"
+                    : field.charAt(0).toUpperCase() + field.slice(1)}
+              </label>
+
+              <input
+                name={field}
+                value={(form as any)[field]}
+                onChange={handleChange}
+                readOnly={!editMode}
+                className={`w-full px-4 py-3 rounded-lg text-[#111d23] font-medium border transition ${editMode
+                    ? "bg-white border-indigo-300 focus:ring-2 focus:ring-indigo-200"
+                    : "bg-[#e9f6fd] border-transparent cursor-not-allowed"
+                  }`}
+              />
+            </div>
           ))}
         </div>
 
-        {/*Hide bookings if admin */}
+        {/* booking */}
         {!isAdmin && (
-          <ProfileBooking
-            bookings={bookings}
-            maxVisible={3}
-            onSeeAll={() => navigate("/my-bookings")}
-          />
+          <div className="px-10 pb-10 border-t">
+            <ProfileBooking
+              bookings={bookings}
+              maxVisible={3}
+              onSeeAll={() => navigate("/my-bookings")}
+            />
+          </div>
         )}
-      </AnimatedCard>
+      </div>
 
-      {/*Dynamic back button */}
-      <Button
-        className="mt-6"
-        onClick={() => navigate(isAdmin ? "/admin" : "/home")}
-      >
-        Back
-      </Button>
+      <div className="mt-8 flex justify-center">
+        <Button
+          onClick={() => navigate(isAdmin ? "/admin" : "/home")}
+          className="text-gray-500 hover:text-indigo-600 font-semibold transition"
+          variant="outline"
+        >
+           Home
+        </Button>
+      </div>
+
+      {showPasswordCard && (
+        <ChangePasswordCard onClose={() => setShowPasswordCard(false)} />
+      )}
 
       <DeleteWarning
         open={showWarning}

@@ -5,7 +5,7 @@ export interface TimeSlot {
   consultantId: string
   startTime: string
   endTime: string
-  status: "AVAILABLE" | "BOOKED"
+  status: "AVAILABLE" | "BOOKED" | "EXPIRED"
   createdAt: string
 
   consultant?: {
@@ -25,20 +25,20 @@ export interface TimeSlot {
     customerName: string
     customerEmail: string
     createdAt: string
-  } | null
+  }[] | null
 }
 
 export interface CreateTimeSlotInputs {
   consultantId: string
   startTime: string
-  endTime: string
+  // endTime: string
 }
 
 export interface UpdateTimeSlotInputs {
   consultantId?: string;
   startTime?: string
-  endTime?: string
-  status?: "AVAILABLE" | "BOOKED"
+  // endTime?: string
+  status?: "AVAILABLE" | "BOOKED" | "EXPIRED"
 }
 
 export interface TimeSlotsResponse {

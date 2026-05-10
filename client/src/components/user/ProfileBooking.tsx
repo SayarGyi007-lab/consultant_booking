@@ -1,5 +1,4 @@
 import type { Booking } from "../../slices/interfaces/booking";
-import Button from "../../ui/Button";
 
 interface Props {
   bookings: Booking[];
@@ -12,49 +11,50 @@ const ProfileBooking = ({ bookings, maxVisible = 3, onSeeAll }: Props) => {
 
   return (
     <div className="mt-8">
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="text-xl font-bold text-gray-800">Booking History</h3>
+
+      <div className="flex justify-between items-center mb-6">
+        <h3 className="text-xl font-bold text-[#111d23]">
+          Recent Bookings
+        </h3>
+
         {onSeeAll && bookings.length > maxVisible && (
-          <Button
-            variant="uncommon"
-            className="border text-indigo-600 bg-indigo-50 hover:bg-indigo-100 px-3 py-1 rounded-md"
+          <button
             onClick={onSeeAll}
+            className="text-indigo-600 text-sm font-semibold hover:underline"
           >
             See All
-          </Button>
+          </button>
         )}
       </div>
 
       {recentBookings.length === 0 ? (
         <p className="text-gray-400 text-sm">No bookings yet.</p>
       ) : (
-        <div className="space-y-4 max-h-72 overflow-y-auto">
+        <div className="space-y-4">
           {recentBookings.map((booking) => (
             <div
               key={booking.id}
-              className="p-4 border rounded-xl flex justify-between items-center hover:shadow-md transition"
+              className="flex justify-between items-center p-4 rounded-xl border border-gray-200 bg-white hover:bg-[#e9f6fd] transition"
             >
               <div>
-                <p className="font-medium text-gray-800">
+                <p className="font-semibold text-[#111d23]">
                   {booking.slot?.consultant
                     ? `${booking.slot.consultant.firstName} ${booking.slot.consultant.lastName}`
-                    : "N/A"}
+                    : "N/A"} <span className="bg-[#0a6468]/30 rounded-lg px-2 py-1 text-xs text-[#004b4e]">{booking.slot?.consultant?.expertise}</span>
                 </p>
-                <p className="text-gray-500 text-sm">
+
+                <p className="text-sm text-gray-500">
                   {booking.slot
-                    ? `${new Date(booking.slot.startTime).toLocaleDateString()} ${new Date(
+                    ? `${new Date(booking.slot.startTime).toLocaleDateString()} • ${new Date(
                         booking.slot.startTime
-                      ).toLocaleTimeString()} - ${new Date(
-                        booking.slot.endTime
                       ).toLocaleTimeString()}`
                     : "No slot info"}
                 </p>
-                <p className="text-gray-400 text-xs">
-                  {booking.slot?.consultant?.phone && `${booking.slot.consultant.phone}`}{" | "}
-                  {booking.slot?.consultant?.email && `${booking.slot.consultant.email}`}
-                </p>
               </div>
-              <span className="text-sm text-gray-400">{booking.slot?.status ?? "Pending"}</span>
+
+              <span className="text-xs px-3 py-1 rounded-full bg-[#a6eff3] text-black font-semibold">
+                {booking.status ?? "Pending"}
+              </span>
             </div>
           ))}
         </div>

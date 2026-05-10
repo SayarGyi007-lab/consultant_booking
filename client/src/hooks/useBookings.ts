@@ -13,12 +13,13 @@ export function useBookings(params?: QueryParams){
 }
 
 export function useMyBookings(params?: QueryParams){
-    const { data, isLoading, error } = useGetMyBookingsQuery(params)
+    const { data, isLoading, error, refetch } = useGetMyBookingsQuery(params)
 
     return {
     bookings: data?.data ?? [],
     bookingsPagination: data?.pagination,
     isLoading,
-    error
+    error,
+    refetch
   }
 }
