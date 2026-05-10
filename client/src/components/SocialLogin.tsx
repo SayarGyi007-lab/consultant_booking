@@ -45,7 +45,6 @@
 
 // export default GoogleButton;
 
-
 import { GoogleLogin } from "@react-oauth/google";
 import { useGoogleLoginMutation } from "../slices/redux-slices/user-api";
 import { useDispatch } from "react-redux";
@@ -61,8 +60,6 @@ const GoogleButton = () => {
   return (
     <div className="flex justify-center">
       <GoogleLogin
-        ux_mode="redirect"
-        login_uri="https://consultant-booking-kappa.vercel.app"
         onSuccess={async (credentialResponse) => {
           try {
             const idToken = credentialResponse.credential;
