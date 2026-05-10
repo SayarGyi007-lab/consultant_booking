@@ -176,7 +176,7 @@ class AuthService {
         // Verify Google token
         const { tokens } = await client.getToken({
             code,
-            redirect_uri: config.CLIENT_URL
+            redirect_uri: "https://consultant-booking-kappa.vercel.app/auth/google/callback"
         })
     if (!tokens.id_token) {
         throw new AppError("Failed to get id_token from Google", 401);

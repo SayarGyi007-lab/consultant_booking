@@ -114,6 +114,8 @@ const GoogleButton = () => {
 
   const login = useGoogleLogin({
     flow: "auth-code",
+    ux_mode: "redirect",                                              // ← full redirect, no popup
+    redirect_uri: "https://consultant-booking-kappa.vercel.app/auth/google/callback",
     onSuccess: async (codeResponse) => {
       try {
         const res = await googleLogin(codeResponse.code).unwrap();
