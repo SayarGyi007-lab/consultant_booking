@@ -29,9 +29,9 @@ model Consultant {
   lastName   String
   email      String   @unique
   expertise  String
-  bio        String // AI explanation
+  bio        String @default("") // AI explanation
   skills     String[] // AI matching
-  experience Int // years
+  experience Int @default(0) // years
   price       Float @default(0)
   rating      Float? // computed
   reviewCount Int? // computed
@@ -74,7 +74,7 @@ model Review {
 
   consultantId String
   userId       String
-  bookingId    String @unique  // ✅ NEW
+  bookingId    String @unique 
 
   rating  Int
   comment String?
