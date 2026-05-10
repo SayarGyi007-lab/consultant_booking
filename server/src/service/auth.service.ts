@@ -172,12 +172,20 @@ class AuthService {
         };
     }
 
-    async googleLogin(idToken: string) {
+    async googleLogin(code: string) {
         // Verify Google token
-        const ticket = await client.verifyIdToken({
-            idToken,
-            audience: config.GOOGLE_CLIENT_ID,
-        });
+        const { tokens } = await client.getToken({
+            code,
+            redirect_uri: config.CLIENT_URL
+        })
+    if (!tokens.id_token) {
+        throw new AppError("Failed to get id_token from Google", 401);
+    }
+
+    const ticket = await client.verifyIdToken({
+        idToken: tokens.id_token,
+        audience: config.GOOGLE_CLIENT_ID,
+    });
 
         const payload = ticket.getPayload();
 
