@@ -57,6 +57,8 @@ const GoogleButton = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  console.log("Client ID:", import.meta.env.VITE_GOOGLE_CLIENT_ID);
+
   return (
     <div className="flex justify-center">
       <GoogleLogin
