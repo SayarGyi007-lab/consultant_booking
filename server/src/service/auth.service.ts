@@ -173,6 +173,8 @@ class AuthService {
     }
 
     async googleLogin(code: string) {
+
+        console.log("REDIRECT URI:", config.CLIENT_URL);
         // Verify Google token
         const { tokens } = await client.getToken({
             code,
