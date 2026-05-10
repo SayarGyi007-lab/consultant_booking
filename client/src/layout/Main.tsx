@@ -2,8 +2,10 @@ import { Bounce, ToastContainer } from 'react-toastify';
 import { Outlet } from 'react-router-dom';
 import { Header } from '../constant/lazyload';
 import ChatWidget from '../ui/components/chat/ChatWidget';
+import { useSelector } from 'react-redux';
 
 function Main() {
+  const { userInfo } = useSelector((state: any) => state.auth);
   return (
     <section className="min-h-screen flex flex-col relative bg-[#f4faff]">
       
@@ -27,7 +29,7 @@ function Main() {
         <Outlet />
       </div>
 
-      <ChatWidget />
+      {userInfo && <ChatWidget />}
 
     </section>
   );
