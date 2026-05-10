@@ -1,4 +1,7 @@
-#  Consultant Booking System
+# [Consultant Booking System](https://consultant-booking-kappa.vercel.app)
+
+> Click to view the live demo.  
+> Note: Google social login may not work properly with some browser extensions or strict privacy settings.
 
 A full-stack consultant booking system that allows users to browse, book, and manage appointments with consultants. Built with a modern tech stack, clean architecture, and scalability in mind.
 
@@ -11,7 +14,7 @@ This project is a **full-stack web application** consisting of:
 - **Frontend (client)** → React + Vite + TypeScript  
 - **Backend (server)** → Node.js + Express + Prisma  
 - **Database** → PostgreSQL  
-- **RateLimit & Infrastructure** → Redis + Docker  
+- **Infrastructure** → Redis + Docker  
 
 It demonstrates real-world backend practices such as:
 - RESTful API design
@@ -28,6 +31,7 @@ It demonstrates real-world backend practices such as:
 - Browse consultants
 - Book appointments
 - Manage System
+- AI chat box
 
 ###  System
 - RESTful API
@@ -37,7 +41,7 @@ It demonstrates real-world backend practices such as:
 
 ###  Performance & DevOps
 - Docker support for services
-- Redis integration (for rate-limit & cache / future improvements)
+- Redis integration (token storage, caching, and future improvements)
 
 ---
 
