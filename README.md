@@ -3,7 +3,7 @@
 > Click to view the live demo.  
 > Note: Google social login may not work properly with some browser extensions or strict privacy settings.
 
-A full-stack consultant booking system that allows users to browse, book, and manage appointments with consultants. Built with a modern tech stack, clean architecture, and scalability in mind.
+A full-stack consultant booking system powered by AI chat assistant that allows users to browse, book, and manage appointments with consultants. Built with a modern tech stack, clean architecture, and scalability in mind.
 
 ---
 
@@ -12,7 +12,7 @@ A full-stack consultant booking system that allows users to browse, book, and ma
 This project is a **full-stack web application** consisting of:
 
 - **Frontend (client)** → React + Vite + TypeScript  
-- **Backend (server)** → Node.js + Express + Prisma  
+- **Backend (server)** → Node.js + Express + Prisma  + OpenRouter
 - **Database** → PostgreSQL  
 - **Infrastructure** → Redis + Docker  
 
